@@ -55,10 +55,7 @@ final class SectionsConfigurator
 
         if (isset($config['host']) && '' !== (string) $config['host']) {
             $config['host'] = mb_strtolower($config['host']);
-
-            if (empty($primaryConfig['host_pattern'])) {
-                $config['host_pattern'] = '^'.preg_quote($config['host']).'$';
-            }
+            $config['host_pattern'] = '^'.preg_quote($config['host']).'$';
         }
 
         $this->sections[$name] = array_merge(self::DEFAULT_VALUES, $config);
@@ -159,12 +156,6 @@ final class SectionsConfigurator
         $prefix = array_filter(explode('/', $currentPrefix));
         $prefixes = array_filter(explode('/', $otherPrefix));
         $matches = false;
-
-        // Start index is non-existing, so the prefix is '/', and thus will always match.
-        // When $prefixes[0] is unset it means there is logic error, only one '/' is allowed per host.
-        if (!isset($prefix[0])) {
-            return $prefixes[0];
-        }
 
         foreach ($prefixes as $i => $secondaryPrefix) {
             if (!isset($prefix[$i])) {
