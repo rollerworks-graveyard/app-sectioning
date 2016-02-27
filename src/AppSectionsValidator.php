@@ -9,20 +9,18 @@
  * with this source code in the file LICENSE.
  */
 
-namespace ParkManager\Component\AppSectioning;
+namespace ParkManager\Bundle\AppSectioning;
 
-use ParkManager\Component\AppSectioning\Exception\ValidatorException;
+use ParkManager\Bundle\AppSectioning\Exception\ValidatorException;
 
 /**
  * The AppSectionsValidator validates whether the provided Application sections
  * information is valid.
  *
- * The following is validated:
+ * The in practice this validates that all provided sections are not conflicting
+ * with each other (unique prefix per host).
  *
- * * the host_pattern matches the host (when both are provided) in a section;
- * * all provided sections are not conflicting with each other (unique prefix per host);
- *
- * @todo Validate when a host-pattern is provided, other matching hosts do conflict with prefixes.
+ * @author Sebastiaan Stok <s.stok@rollerscapes.net>
  */
 final class AppSectionsValidator
 {
