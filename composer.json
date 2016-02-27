@@ -15,12 +15,12 @@
     },
     "autoload": {
         "psr-4": {
-            "ParkManager\\Component\\AppSectioning\\": "src/"
+            "ParkManager\\Bundle\\AppSectioning\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "ParkManager\\Component\\AppSectioning\\Tests\\": "tests/"
+            "ParkManager\\Bundle\\AppSectioning\\Tests\\": "tests/"
         }
     }
 }
