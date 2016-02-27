@@ -9,9 +9,9 @@
  * with this source code in the file LICENSE.
  */
 
-namespace ParkManager\Component\AppSectioning\Tests;
+namespace ParkManager\Bundle\AppSectioning\Tests;
 
-use ParkManager\Component\AppSectioning\SectionsConfigurator;
+use ParkManager\Bundle\AppSectioning\SectionsConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpFoundation\RequestMatcher;
 

@@ -9,10 +9,10 @@
  * with this source code in the file LICENSE.
  */
 
-namespace ParkManager\Component\AppSectioning\Tests;
+namespace ParkManager\Bundle\AppSectioning\Tests;
 
-use ParkManager\Component\AppSectioning\AppSectionsValidator;
-use ParkManager\Component\AppSectioning\Exception\ValidatorException;
+use ParkManager\Bundle\AppSectioning\AppSectionsValidator;
+use ParkManager\Bundle\AppSectioning\Exception\ValidatorException;
 
 final class AppSectionsValidatorTest extends \PHPUnit_Framework_TestCase
 {

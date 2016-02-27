@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace ParkManager\Component\AppSectioning;
+namespace ParkManager\Bundle\AppSectioning;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpFoundation\RequestMatcher;
