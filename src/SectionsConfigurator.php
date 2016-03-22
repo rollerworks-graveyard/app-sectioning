@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the ParkManager AppSectioning package.
+ * This file is part of the Park-Manager AppSectioningBundle package.
  *
  * (c) Sebastiaan Stok <s.stok@rollerscapes.net>
  *
@@ -44,21 +44,14 @@ final class SectionsConfigurator
     /**
      * Set a section to be processed.
      *
-     * @param string $name
-     * @param array  $config
+     * @param string               $name
+     * @param SectionConfiguration $config
+     * @param string               $servicePrefix
      */
-    public function set(string $name, array $config)
+    public function set(string $name, SectionConfiguration $config, string $servicePrefix)
     {
-        if (isset($config['prefix'])) {
-            $config['prefix'] = trim(mb_strtolower($config['prefix']), '/').'/';
-        }
-
-        if (isset($config['host']) && '' !== (string) $config['host']) {
-            $config['host'] = mb_strtolower($config['host']);
-            $config['host_pattern'] = '^'.preg_quote($config['host']).'$';
-        }
-
-        $this->sections[$name] = array_merge(self::DEFAULT_VALUES, $config);
+        $this->sections[$name] = $config->getConfig();
+        $this->sections[$name]['service_prefix'] = $servicePrefix;
     }
 
     /**
@@ -77,13 +70,12 @@ final class SectionsConfigurator
      * '{service-prefix}.{section-name}.request_matcher'  => {RequestMatcher service}
      *
      * @param ContainerBuilder $container
-     * @param string           $servicePrefix
      */
-    public function registerToContainer(ContainerBuilder $container, string $servicePrefix)
+    public function registerToContainer(ContainerBuilder $container)
     {
-        $servicePrefix = rtrim($servicePrefix, '.').'.';
-
         foreach ($this->processSections($this->sections) as $name => $config) {
+            $servicePrefix = rtrim($config['service_prefix'], '.').'.';
+
             $container->setParameter($servicePrefix.$name.'.host', $config['host']);
             $container->setParameter($servicePrefix.$name.'.host_pattern', $config['host_pattern']);
             $container->setParameter($servicePrefix.$name.'.prefix', $config['prefix']);

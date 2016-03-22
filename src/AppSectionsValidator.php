@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the ParkManager AppSectioning package.
+ * This file is part of the Park-Manager AppSectioningBundle package.
  *
  * (c) Sebastiaan Stok <s.stok@rollerscapes.net>
  *
@@ -29,28 +29,15 @@ final class AppSectionsValidator
      */
     private $sections = [];
 
-    const DEFAULT_VALUES = [
-        'prefix' => '/',
-        'host' => null,
-    ];
-
     /**
      * Set a section to validate as a whole list.
      *
-     * @param string $name
-     * @param array  $config
+     * @param string               $name
+     * @param SectionConfiguration $config
      */
-    public function set(string $name, array $config)
+    public function set(string $name, SectionConfiguration $config)
     {
-        if (isset($config['prefix'])) {
-            $config['prefix'] = mb_strtolower($config['prefix']);
-        }
-
-        if (isset($config['host'])) {
-            $config['host'] = mb_strtolower($config['host']);
-        }
-
-        $this->sections[$name] = array_merge(self::DEFAULT_VALUES, $config);
+        $this->sections[$name] = $config->getConfig();
     }
 
     /**
@@ -58,11 +45,11 @@ final class AppSectionsValidator
      *
      * @param bool $exceptionOnFailure
      *
-     * @return bool Returns true on success, false when ($exceptionOnFailure is true) and there
-     *              are violations.
-     *
      * @throws ValidatorException When one ore more sections have a wrong or conflicting
      *                            configuration.
+     *
+     * @return bool Returns true on success, false when ($exceptionOnFailure is true) and there
+     *              are violations.
      */
     public function validate(bool $exceptionOnFailure = true): bool
     {
@@ -84,8 +71,7 @@ final class AppSectionsValidator
             if (count($conflicts)) {
                 throw ValidatorException::sectionsConfigConflict($this->buildConflictsArray($conflicts));
             }
-        }
-        catch (ValidatorException $e) {
+        } catch (ValidatorException $e) {
             if (!$exceptionOnFailure) {
                 return false;
             }

@@ -13,6 +13,10 @@
         "php": ">=7.0",
         "symfony/framework-bundle": "^2.8|^3.0"
     },
+    "require-dev": {
+        "matthiasnoback/symfony-dependency-injection-test": "^0.7.6"
+    },
+
     "autoload": {
         "psr-4": {
             "ParkManager\\Bundle\\AppSectioning\\": "src/"

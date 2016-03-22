@@ -22,7 +22,7 @@ And where there is a conflict, eg. both share the same hos and prefix you will b
 informed about this error.
 
 **Coming-up:** At this moment you can only use static values, but in the future
-it will be possible to also use regexp and placeholders with conflict detection.
+it will be possible to use placeholders (with conflict detection).
 
 Park-Manager
 ------------
