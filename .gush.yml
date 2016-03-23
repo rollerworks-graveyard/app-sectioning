@@ -6,7 +6,7 @@ table-pr:
     bc_breaks: ['BC Breaks?', 'no']
     deprecations: ['Deprecations?', 'no']
     fixed_tickets: ['Fixed Tickets', '']
-    license: ['License', 'MIT']
+    license: [License, MIT]
 pr_type:
     - feature
     - bug
@@ -14,3 +14,9 @@ pr_type:
     - style
     - doc
     - security
+repo_adapter: github
+issue_tracker: github
+repo_org: park-manager
+repo_name: app-sectioning-bundle
+issue_project_org: park-manager
+issue_project_name: app-sectioning-bundle
