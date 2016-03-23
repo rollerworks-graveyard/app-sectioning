@@ -1,7 +1,7 @@
 {
     "name": "park-manager/app-sectioning-bundle",
     "description": "Configuration helper for separating your Symfony application into multiple sections",
-    "type": "library",
+    "type": "symfony-bundle",
     "license": "MIT",
     "authors": [
         {
