@@ -47,6 +47,6 @@ final class AppSectionsPass implements CompilerPassInterface
 
         $validator->validate();
 
-            $configurator->registerToContainer($container);
+        $configurator->registerToContainer($container);
     }
 }
