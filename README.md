@@ -41,8 +41,8 @@ Documentation
 
  * [Installation](doc/install.md)
  * [Configuration](doc/configuration.md)
- * [Security firewall](firewall.md)
- * [Routing](routing.md)
+ * [Security firewall](doc/firewall.md)
+ * [Routing](doc/routing.md)
 
 Versioning
 ----------
