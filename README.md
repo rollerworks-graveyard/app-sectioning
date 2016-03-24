@@ -1,5 +1,5 @@
-ParkManager AppSectioning configurator
-====================================
+Park-Manager AppSectioning configurator
+=======================================
 
 The AppSectioning configurator helps with separating your Symfony application
 into multiple sections (eg. frontend and backend). Each with there own
@@ -13,16 +13,18 @@ Say there are two sections:
 * Backend  - host: example.com prefix: backend/
 
 Unless the 'backend' section is tried earlier the 'frontend' will always match!
-To prevent this the path (regex) is configured to never match 'backend/'.
-Only when both share the same host group and only there is an actual conflict.
+To prevent this, the path (regex) is configured to never match 'backend/'.
+Only when both share the same host group and only there is a conflict.
 
-You then use these generated parameters for routing and security firewalls.
-
-And where there is a conflict, eg. both share the same hos and prefix you will be
-informed about this error.
+You then use these generated parameters for routing and the security firewalls.
 
 **Coming-up:** At this moment you can only use static values, but in the future
 it will be possible to use placeholders (with conflict detection).
+
+**Caution:** Registering a section name that is already
+used will overwrite the other one (without warning).
+
+This bundle is best used for multi-section applications and not decoupled bundles.
 
 Park-Manager
 ------------
@@ -32,24 +34,15 @@ Park-Manager is your friend in hosting software. Visit [Park-Manager.com](http:/
 Requirements
 ------------
 
-You need at least PHP 7.0, the Symfony FrameworkBundle and Routing Component.
+You need at least PHP 7.0 and the Symfony FrameworkBundle.
 
-Installation
-------------
+Documentation
+-------------
 
-To install this package, add `parkmanager/app-sectioning-bundle` to your composer.json
-
-```bash
-$ php composer.phar require parkmanager/app-sectioning-bundle
-```
-
-Now, Composer will automatically download all required files, and install them
-for you.
-
-Basic usage
------------
-
-TBD.
+ * [Installation](doc/install.md)
+ * [Configuration](doc/configuration.md)
+ * [Security firewall](firewall.md)
+ * [Routing](routing.md)
 
 Versioning
 ----------
