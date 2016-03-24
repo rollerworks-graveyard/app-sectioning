@@ -55,17 +55,11 @@ final class AppSectionsPassTest extends AbstractCompilerPassTestCase
 
         $requestMatcherFrontend = $this->container->getDefinition('acme.section.frontend.request_matcher');
         $this->assertEquals(RequestMatcher::class, $requestMatcherFrontend->getClass());
-        $this->assertEquals(
-            ['%acme.section.frontend.path%', '%acme.section.frontend.host_pattern%'],
-            $requestMatcherFrontend->getArguments()
-        );
+        $this->assertEquals(['^/(?!(backend)/)', '^example\.com$'], $requestMatcherFrontend->getArguments());
 
         $requestMatcherBackend = $this->container->getDefinition('acme.section.backend.request_matcher');
         $this->assertEquals(RequestMatcher::class, $requestMatcherBackend->getClass());
-        $this->assertEquals(
-            ['%acme.section.backend.path%', '%acme.section.backend.host_pattern%'],
-            $requestMatcherBackend->getArguments()
-        );
+        $this->assertEquals(['^/backend/', '^example\.com$'], $requestMatcherBackend->getArguments());
     }
 
     /**
@@ -105,17 +99,11 @@ final class AppSectionsPassTest extends AbstractCompilerPassTestCase
 
         $requestMatcherFrontend = $this->container->getDefinition('acme.section.frontend.request_matcher');
         $this->assertEquals(RequestMatcher::class, $requestMatcherFrontend->getClass());
-        $this->assertEquals(
-            ['%acme.section.frontend.path%', '%acme.section.frontend.host_pattern%'],
-            $requestMatcherFrontend->getArguments()
-        );
+        $this->assertEquals(['^/(?!(backend)/)', '^example\.com$'], $requestMatcherFrontend->getArguments());
 
         $requestMatcherBackend = $this->container->getDefinition('park.section.backend.request_matcher');
         $this->assertEquals(RequestMatcher::class, $requestMatcherBackend->getClass());
-        $this->assertEquals(
-            ['%park.section.backend.path%', '%park.section.backend.host_pattern%'],
-            $requestMatcherBackend->getArguments()
-        );
+        $this->assertEquals(['^/backend/', '^example\.com$'], $requestMatcherBackend->getArguments());
     }
 
     /**

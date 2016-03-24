@@ -233,17 +233,11 @@ final class SectionsConfiguratorTest extends \PHPUnit_Framework_TestCase
 
         $requestMatcherFrontend = $container->getDefinition('acme.section.frontend.request_matcher');
         $this->assertEquals(RequestMatcher::class, $requestMatcherFrontend->getClass());
-        $this->assertEquals(
-            ['%acme.section.frontend.path%', '%acme.section.frontend.host_pattern%'],
-            $requestMatcherFrontend->getArguments()
-        );
+        $this->assertEquals(['^/(?!(backend)/)', '^example\.com$'], $requestMatcherFrontend->getArguments());
 
         $requestMatcherBackend = $container->getDefinition('park.section.backend.request_matcher');
         $this->assertEquals(RequestMatcher::class, $requestMatcherBackend->getClass());
-        $this->assertEquals(
-            ['%park.section.backend.path%', '%park.section.backend.host_pattern%'],
-            $requestMatcherBackend->getArguments()
-        );
+        $this->assertEquals(['^/backend/', '^example\.com$'], $requestMatcherBackend->getArguments());
 
         // Ensure definitions are correct.
         $container->compile();

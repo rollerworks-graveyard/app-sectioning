@@ -69,6 +69,9 @@ final class SectionsConfigurator
      * '{service-prefix}.{section-name}.path'             => '^/(?!(backend|api)/)'
      * '{service-prefix}.{section-name}.request_matcher'  => {RequestMatcher service}
      *
+     * Note: when the host is empty the 'host_pattern' is '.*' (as the route requirement)
+     * cannot be empty. The host pattern for the request_matcher is null then.
+     *
      * @param ContainerBuilder $container
      */
     public function registerToContainer(ContainerBuilder $container)
@@ -76,12 +79,15 @@ final class SectionsConfigurator
         foreach ($this->processSections($this->sections) as $name => $config) {
             $servicePrefix = rtrim($config['service_prefix'], '.').'.';
 
-            $container->setParameter($servicePrefix.$name.'.host', $config['host']);
-            $container->setParameter($servicePrefix.$name.'.host_pattern', $config['host_pattern']);
+            $container->setParameter($servicePrefix.$name.'.host', (string) $config['host']);
+            $container->setParameter($servicePrefix.$name.'.host_pattern', (string) ($config['host_pattern'] ?: '.*'));
             $container->setParameter($servicePrefix.$name.'.prefix', $config['prefix']);
             $container->setParameter($servicePrefix.$name.'.path', $config['path']);
             $container->register($servicePrefix.$name.'.request_matcher', RequestMatcher::class)->setArguments(
-                ['%'.$servicePrefix.$name.'.path%', '%'.$servicePrefix.$name.'.host_pattern%']
+                [
+                    $container->getParameterBag()->escapeValue($config['path']),
+                    $container->getParameterBag()->escapeValue($config['host_pattern']),
+                ]
             );
         }
     }
