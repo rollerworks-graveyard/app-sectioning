@@ -39,4 +39,4 @@ class AppKernel extends Kernel
 
 You are now ready to use the Park-Manager AppSectioning configurator bundle.
 
-Continue to [usage.md] to learn more about usage and implementation.
+Continue to [Configuration][usage.md] to learn more about usage and implementation.

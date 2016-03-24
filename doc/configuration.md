@@ -19,7 +19,7 @@ namespace Acme\FrontendBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use \ParkManager\Bundle\AppSectioning\DependencyInjection\SectioningConfigurator;
+use ParkManager\Bundle\AppSectioning\DependencyInjection\SectioningConfigurator;
 
 class DatabaseConfiguration implements ConfigurationInterface
 {
@@ -45,7 +45,7 @@ class DatabaseConfiguration implements ConfigurationInterface
 ```
 
 The `SectioningConfigurator::createSection()` method adds the required
-configuration leaves to the Configuration tree (prefix and host).
+configuration parts to the Configuration tree (prefix and host).
 
 Next update your bundle's Extension class to get the section(s) registered:
 
@@ -55,6 +55,7 @@ namespace Acme\FrontendBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
+use ParkManager\Bundle\AppSectioning\DependencyInjection\SectioningFactory;
 
 class AcmeFrontendExtension extends ConfigurableExtension
 {
@@ -108,6 +109,6 @@ And `{section-name}` the name of the section.
 
 Placeholders for eg. `{_locale}` or more tld's/IP nets in the host, are not supported
 yet. A negative lookahead regex pattern must only be used when there are sections that match,
-else `^/(?!(user)/)` is going to fail with `/user/` in the backend section (with it's host).
+else `^/(?!(user)/)` is going to fail with `/user/` in the backend section (with it a different host).
 
-See [Add placeholder support for prefix and host in the issue tracker](https://github.com/park-manager/app-sectioning-bundle/issues/1)
+See also [Add placeholder support for prefix and host in the issue tracker](https://github.com/park-manager/app-sectioning-bundle/issues/1)
