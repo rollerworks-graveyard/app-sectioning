@@ -31,7 +31,8 @@ class DatabaseConfiguration implements ConfigurationInterface
         $rootNode
             ->children()
                 // 'section' is config name as used in the tree.
-                // in the end the section is registered as `acme_frontend.section`
+                // in the end the section is registered in your bundle extension config
+                // as `acme_frontend.section`
                 ->append(SectioningConfigurator::createSection('section'))
 
                 // Optionally add an extra section
@@ -47,7 +48,8 @@ class DatabaseConfiguration implements ConfigurationInterface
 The `SectioningConfigurator::createSection()` method adds the required
 configuration parts to the Configuration tree (prefix and host).
 
-Next update your bundle's Extension class to get the section(s) registered:
+Next update your bundle's Extension class to get the section(s) registered
+the service container:
 
 ```php
 // src/Acme/FrontendBundle/DependencyInjection/AcmeFrontendExtension.php
@@ -76,7 +78,14 @@ class AcmeFrontendExtension extends ConfigurableExtension
 ```
 
 That's it! Users of your bundle can now configure the `frontend` section
-with a custom host and prefix.
+with a custom host and prefix using the following configuration:
+
+```yaml
+acme_frontend:
+    section:
+        prefix: /
+        host: example.com
+```
 
 ### Container parameters
 
@@ -93,22 +102,22 @@ you use the service-container parameters like:
 **Note:** `host_pattern` and `path` are regular expressions, host will match
 completely but path will only check the beginning of the uri.
 
-Plus the 'acme.section.frontend.request_matcher' service which provides an
+The `acme.section.frontend.request_matcher` service provides a
 configured `RequestMatcher` for the firewall and other services.
 
-All follow the same `{service-prefix}.{section-name}` pattern.
+All parameters follow the same `{service-prefix}.{section-name}` pattern.
 Service-prefix is value of the second parameter of `SectioningFactory`
 used when registering (`acme.section` in the example above).
 
-And `{section-name}` the name of the section.
+And `{section-name}` the name of the section (like 'frontend').
 
 [security firewall]: firewall.md
 [routing]: routing.md
 
 ## Limitations
 
-Placeholders for eg. `{_locale}` or more tld's/IP nets in the host, are not supported
-yet. A negative lookahead regex pattern must only be used when there are sections that match,
-else `^/(?!(user)/)` is going to fail with `/user/` in the backend section (with it a different host).
+Placeholders for eg. `{_locale}` or more tld's/IP nets in the host, are not supported yet.
+*A negative lookahead regex pattern must only be used when there are sections that match,
+else `^/(?!(user)/)` is going to fail with `/user/` in the backend section (with it a different host).*
 
 See also [Add placeholder support for prefix and host in the issue tracker](https://github.com/park-manager/app-sectioning-bundle/issues/1)
