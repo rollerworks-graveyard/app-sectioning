@@ -29,8 +29,8 @@ final class SectionsConfiguratorTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [
-                'frontend' => ['host' => null, 'host_pattern' => null, 'prefix' => 'client/', 'path' => '^/client/', 'service_prefix' => 'acme.section'],
-                'backend' => ['host' => null, 'host_pattern' => null, 'prefix' => 'backend/', 'path' => '^/backend/', 'service_prefix' => 'acme.section'],
+                'frontend' => ['host' => null, 'host_pattern' => null, 'prefix' => 'client/', 'path' => '^/client/', 'service_prefix' => 'acme.section', 'requirements' => []],
+                'backend' => ['host' => null, 'host_pattern' => null, 'prefix' => 'backend/', 'path' => '^/backend/', 'service_prefix' => 'acme.section', 'requirements' => []],
             ],
             $configurator->exportConfiguration()
         );
@@ -53,6 +53,7 @@ final class SectionsConfiguratorTest extends \PHPUnit_Framework_TestCase
                     'prefix' => '/',
                     'path' => '^/',
                     'service_prefix' => 'acme.section',
+                    'requirements' => ['host' => '^example\.net$'],
                 ],
                 'backend' => [
                     'host' => 'example.com',
@@ -60,6 +61,7 @@ final class SectionsConfiguratorTest extends \PHPUnit_Framework_TestCase
                     'prefix' => '/',
                     'path' => '^/',
                     'service_prefix' => 'acme.section',
+                    'requirements' => ['host' => '^example\.com$'],
                 ],
             ],
             $configurator->exportConfiguration()
@@ -84,6 +86,7 @@ final class SectionsConfiguratorTest extends \PHPUnit_Framework_TestCase
                     'prefix' => '/',
                     'path' => '^/(?!(backend|api)/)',
                     'service_prefix' => 'acme.section',
+                    'requirements' => [],
                 ],
                 'backend' => [
                     'host' => null,
@@ -91,6 +94,7 @@ final class SectionsConfiguratorTest extends \PHPUnit_Framework_TestCase
                     'prefix' => 'backend/',
                     'path' => '^/backend/',
                     'service_prefix' => 'acme.section',
+                    'requirements' => [],
                 ],
                 'api' => [
                     'host' => null,
@@ -98,6 +102,7 @@ final class SectionsConfiguratorTest extends \PHPUnit_Framework_TestCase
                     'prefix' => 'api/',
                     'path' => '^/api/',
                     'service_prefix' => 'acme.section',
+                    'requirements' => [],
                 ],
             ],
             $configurator->exportConfiguration()
@@ -123,6 +128,7 @@ final class SectionsConfiguratorTest extends \PHPUnit_Framework_TestCase
                     'prefix' => '/',
                     'path' => '^/(?!(backend|api)/)',
                     'service_prefix' => 'acme.section',
+                    'requirements' => [],
                 ],
                 'backend' => [
                     'host' => null,
@@ -130,6 +136,7 @@ final class SectionsConfiguratorTest extends \PHPUnit_Framework_TestCase
                     'prefix' => 'backend/',
                     'path' => '^/backend/',
                     'service_prefix' => 'acme.section',
+                    'requirements' => [],
                 ],
                 'backend_api' => [
                     'host' => null,
@@ -137,6 +144,7 @@ final class SectionsConfiguratorTest extends \PHPUnit_Framework_TestCase
                     'prefix' => 'api/backend/',
                     'path' => '^/api/backend/',
                     'service_prefix' => 'acme.section',
+                    'requirements' => [],
                 ],
                 'api' => [
                     'host' => null,
@@ -144,6 +152,7 @@ final class SectionsConfiguratorTest extends \PHPUnit_Framework_TestCase
                     'prefix' => 'api/',
                     'path' => '^/api/(?!(backend)/)',
                     'service_prefix' => 'acme.section',
+                    'requirements' => [],
                 ],
             ],
             $configurator->exportConfiguration()
@@ -169,6 +178,7 @@ final class SectionsConfiguratorTest extends \PHPUnit_Framework_TestCase
                     'prefix' => '/',
                     'path' => '^/(?!(backend|api)/)',
                     'service_prefix' => 'acme.section',
+                    'requirements' => ['host' => '^example\.com$'],
                 ],
                 'backend' => [
                     'host' => 'example.com',
@@ -176,6 +186,7 @@ final class SectionsConfiguratorTest extends \PHPUnit_Framework_TestCase
                     'prefix' => 'backend/',
                     'path' => '^/backend/',
                     'service_prefix' => 'acme.section',
+                    'requirements' => ['host' => '^example\.com$'],
                 ],
                 'backend_api' => [
                     'host' => 'example.com',
@@ -183,6 +194,7 @@ final class SectionsConfiguratorTest extends \PHPUnit_Framework_TestCase
                     'prefix' => 'api/backend/',
                     'path' => '^/api/backend/',
                     'service_prefix' => 'acme.section',
+                    'requirements' => ['host' => '^example\.com$'],
                 ],
                 'api' => [
                     'host' => 'example.com',
@@ -190,6 +202,7 @@ final class SectionsConfiguratorTest extends \PHPUnit_Framework_TestCase
                     'prefix' => 'api/',
                     'path' => '^/api/(?!(backend)/)',
                     'service_prefix' => 'acme.section',
+                    'requirements' => ['host' => '^example\.com$'],
                 ],
             ],
             $configurator->exportConfiguration()
