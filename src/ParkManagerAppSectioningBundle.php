@@ -11,17 +11,29 @@
 
 namespace ParkManager\Bundle\AppSectioning;
 
+use ParkManager\Bundle\AppSectioning\DependencyInjection\AppSectionExtension;
+use ParkManager\Bundle\AppSectioning\DependencyInjection\Compiler\AppSectionsPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class ParkManagerAppSectioningBundle extends Bundle
 {
+    public function build(ContainerBuilder $container)
+    {
+        $container->addCompilerPass(new AppSectionsPass());
+    }
+
     public function getContainerExtension()
     {
-        // no
+        if (null === $this->extension) {
+            $this->extension = new AppSectionExtension();
+        }
+
+        return $this->extension;
     }
 
     protected function getContainerExtensionClass()
     {
-        // no
+        return AppSectionExtension::class;
     }
 }

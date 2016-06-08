@@ -15,7 +15,10 @@ use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractCompilerPassTestCase
 use ParkManager\Bundle\AppSectioning\DependencyInjection\Compiler\AppSectionsPass;
 use ParkManager\Bundle\AppSectioning\DependencyInjection\SectioningFactory;
 use ParkManager\Bundle\AppSectioning\Exception\ValidatorException;
+use ParkManager\Bundle\AppSectioning\Routing\AppSectionRouteLoader;
+use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpFoundation\RequestMatcher;
 
 final class AppSectionsPassTest extends AbstractCompilerPassTestCase
@@ -60,6 +63,31 @@ final class AppSectionsPassTest extends AbstractCompilerPassTestCase
         $requestMatcherBackend = $this->container->getDefinition('acme.section.backend.request_matcher');
         $this->assertEquals(RequestMatcher::class, $requestMatcherBackend->getClass());
         $this->assertEquals(['^/backend/', '^example\.com$'], $requestMatcherBackend->getArguments());
+
+        // Note. This assertion is only done once as the values are provided external
+        // This only ensures the service receives the correct values
+        $this->assertContainerBuilderHasServiceDefinitionWithArgument('park_manager.app_section.route_loader', 1, [
+            'frontend' => [
+                'prefix' => '/',
+                'host' => 'example.com',
+                'host_pattern' => '^example\.com$',
+                'requirements' => [
+                    'host' => '^example\.com$',
+                ],
+                'service_prefix' => 'acme.section',
+                'path' => '^/(?!(backend)/)',
+            ],
+            'backend' => [
+                'prefix' => 'backend/',
+                'host' => 'example.com',
+                'host_pattern' => '^example\.com$',
+                'requirements' => [
+                    'host' => '^example\.com$',
+                ],
+                'service_prefix' => 'acme.section',
+                'path' => '^/backend/',
+            ],
+        ]);
     }
 
     /**
@@ -128,6 +156,10 @@ final class AppSectionsPassTest extends AbstractCompilerPassTestCase
 
     protected function registerCompilerPass(ContainerBuilder $container)
     {
+        $container->register('routing.loader', get_class($this->getMock(LoaderInterface::class)));
+        $container->register('park_manager.app_section.route_loader', AppSectionRouteLoader::class)
+            ->setArguments([new Reference('routing.loader'), []]);
+
         $container->addCompilerPass(new AppSectionsPass());
     }
 }

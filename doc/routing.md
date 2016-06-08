@@ -7,26 +7,21 @@ it's now time to configure the routing.
 Note that a section needs to be at the root of importing,
 you cannot import a section as part of another import with prefix and/or host.
 
-**Caution:** Make sure to use prefix (not path)!
+## Route loader
+
+Instead of importing your routes directly, you import them trough the app_section route loader.
+
+The syntax for a resource is as follow: `section-name#actual-resource`, or `section-name:type#actual-resource`
+if you need to import a specific resource type.
 
 ```yaml
 # app/config/routing.yml
 
 acme_frontend:
-    resource: '@AcmeFrontendBundle/Resources/config/routing.yml'
-    prefix:   "%acme.section.frontend.prefix%"
-    host:     "%acme.section.frontend.host%"
-    requirements:
-        host: "%acme.section.frontend.host_pattern%"
-    defaults:
-        host: "acme.section.frontend.host%"
+    resource: 'frontend:yml#@AcmeFrontendBundle/Resources/config/routing.yml'
+    type: app_section
 
 acme_backend:
-    resource: '@AcmeBackendBundle/Resources/config/routing.yml'
-    prefix:   "%acme.section.backend.prefix%"
-    host:     "%acme.section.backend.host%"
-    requirements:
-        host: "%acme.section.backend.host_pattern%"
-    defaults:
-        host: "acme.section.backend.host%"
+    resource: 'backend#@AcmeBackendBundle/Resources/config/routing.yml'
+    type: app_section
 ```

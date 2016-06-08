@@ -48,5 +48,8 @@ final class AppSectionsPass implements CompilerPassInterface
         $validator->validate();
 
         $configurator->registerToContainer($container);
+
+        $routeLoader = $container->findDefinition('park_manager.app_section.route_loader');
+        $routeLoader->replaceArgument(1, $configurator->exportConfiguration());
     }
 }

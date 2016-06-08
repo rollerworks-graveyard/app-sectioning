@@ -33,9 +33,11 @@ final class SectionConfiguration
         if (isset($config['host']) && '' !== (string) $config['host']) {
             $config['host'] = mb_strtolower($config['host']);
             $config['host_pattern'] = '^'.preg_quote($config['host']).'$';
+            $config['requirements']['host'] = $config['host_pattern'];
         } else {
             $config['host'] = null;
             $config['host_pattern'] = null;
+            $config['requirements'] = [];
         }
 
         if (preg_match('#[{}]#', (string) $config['host']) || preg_match('#[{}]#', (string) $config['prefix'])) {
