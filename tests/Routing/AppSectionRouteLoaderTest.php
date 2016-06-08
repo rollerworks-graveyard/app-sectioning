@@ -41,7 +41,6 @@ final class AppSectionRouteLoaderTest extends \PHPUnit_Framework_TestCase
         $loader = $this->prophesize(LoaderInterface::class);
 
         // type=null
-        $loader->supports('something.yml', null)->willReturn(true);
         $loader->load('something.yml', null)->will(
             function () {
                 $routeCollection = new RouteCollection();
@@ -53,7 +52,6 @@ final class AppSectionRouteLoaderTest extends \PHPUnit_Framework_TestCase
         );
 
         // type=xml
-        $loader->supports('something.xml', 'xml')->willReturn(true);
         $loader->load('something.xml', 'xml')->will(
             function () {
                 $routeCollection = new RouteCollection();
@@ -63,9 +61,6 @@ final class AppSectionRouteLoaderTest extends \PHPUnit_Framework_TestCase
                 return $routeCollection;
             }
         );
-
-        // type=php; unsupported, so no need to call load()
-        $loader->supports('something.php', 'php')->willReturn(false);
 
         $this->loader = new AppSectionRouteLoader($loader->reveal(), self::APP_SECTIONS);
     }

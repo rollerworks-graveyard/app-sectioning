@@ -27,6 +27,8 @@ use Symfony\Component\HttpFoundation\RequestMatcher;
  * Unless the 'backend' section is tried earlier the 'frontend' will always match!
  * To prevent this the path (regex) is configured to never match 'backend/'.
  * Only when both share the same host and only there is an actual conflict.
+ *
+ * @author Sebastiaan Stok <s.stok@rollerscapes.net>
  */
 final class SectionsConfigurator
 {
@@ -34,12 +36,6 @@ final class SectionsConfigurator
      * @var array[]
      */
     private $sections = [];
-
-    const DEFAULT_VALUES = [
-        'prefix' => '/',
-        'host' => null,
-        'host_pattern' => null,
-    ];
 
     /**
      * Set a section to be processed.
