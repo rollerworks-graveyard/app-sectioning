@@ -17,7 +17,7 @@ use ParkManager\Bundle\AppSectioning\Exception\ValidatorException;
  * The AppSectionsValidator validates whether the provided Application sections
  * information is valid.
  *
- * The in practice this validates that all provided sections are not conflicting
+ * In practice this validates that all provided sections are not conflicting
  * with each other (unique prefix per host).
  *
  * @author Sebastiaan Stok <s.stok@rollerscapes.net>
@@ -41,48 +41,34 @@ final class AppSectionsValidator
     }
 
     /**
-     * Validates the provided configuration.
+     * Validates the provided configuration for duplicated prefixes in the same host group.
      *
-     * @param bool $exceptionOnFailure
-     *
-     * @throws ValidatorException When one ore more sections have a wrong or conflicting
-     *                            configuration.
-     *
-     * @return bool Returns true on success, false when ($exceptionOnFailure is true) and there
-     *              are violations.
+     * @throws ValidatorException When one ore more sections have a conflicting configuration.
      */
-    public function validate(bool $exceptionOnFailure = true): bool
+    public function validate(): bool
     {
         $prefixes = [];
         $conflicts = [];
 
-        try {
-            foreach ($this->sections as $name => $config) {
-                $prefix = $config['prefix'];
-                $host = $config['host'];
+        foreach ($this->sections as $name => $config) {
+            $prefix = $config['prefix'];
+            $host = $config['host'];
 
-                if (isset($prefixes[$host][$prefix])) {
-                    $conflicts[$prefixes[$host][$prefix]][] = $name;
-                } else {
-                    $prefixes[$host][$prefix] = $name;
-                }
+            if ($this->isPrefixAlreadyUsed($prefixes, $host, $prefix)) {
+                $conflicts[$prefixes[$host][$prefix]][] = $name;
+            } else {
+                $prefixes[$host][$prefix] = $name;
             }
+        }
 
-            if (count($conflicts)) {
-                throw ValidatorException::sectionsConfigConflict($this->buildConflictsArray($conflicts));
-            }
-        } catch (ValidatorException $e) {
-            if (!$exceptionOnFailure) {
-                return false;
-            }
-
-            throw $e;
+        if (count($conflicts)) {
+            throw ValidatorException::sectionsConfigConflict($this->formatPrefixConflicts($conflicts));
         }
 
         return true;
     }
 
-    private function buildConflictsArray(array $conflicts): array
+    private function formatPrefixConflicts(array $conflicts): array
     {
         $failedSections = [];
 
@@ -95,5 +81,10 @@ final class AppSectionsValidator
         }
 
         return $failedSections;
+    }
+
+    private function isPrefixAlreadyUsed(array $prefixes, $host, $prefix)
+    {
+        return isset($prefixes[$host][$prefix]);
     }
 }

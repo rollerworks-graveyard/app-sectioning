@@ -17,17 +17,25 @@ use ParkManager\Bundle\AppSectioning\SectionConfiguration;
 
 final class AppSectionsValidatorTest extends \PHPUnit_Framework_TestCase
 {
+    /** @var AppSectionsValidator */
+    private $validator;
+
+    /** @before */
+    public function setUpValidator()
+    {
+        $this->validator = new AppSectionsValidator();
+    }
+
     /**
      * @test
      */
     public function it_validates_a_single_section_with_prefix_as_positive()
     {
-        $validator = new AppSectionsValidator();
-        $validator->set('first', new SectionConfiguration([
+        $this->validator->set('first', new SectionConfiguration([
             'prefix' => '/',
         ]));
 
-        $this->assertTrue($validator->validate());
+        $this->assertTrue($this->validator->validate());
     }
 
     /**
@@ -35,13 +43,12 @@ final class AppSectionsValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function it_validates_a_single_section_with_prefix_and_host_as_positive()
     {
-        $validator = new AppSectionsValidator();
-        $validator->set('first', new SectionConfiguration([
+        $this->validator->set('first', new SectionConfiguration([
             'prefix' => '/',
             'host' => '',
         ]));
 
-        $this->assertTrue($validator->validate());
+        $this->assertTrue($this->validator->validate());
     }
 
     /**
@@ -49,13 +56,12 @@ final class AppSectionsValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function it_validates_a_section_with_prefix_and_custom_matching_path_as_positive()
     {
-        $validator = new AppSectionsValidator();
-        $validator->set('first', new SectionConfiguration([
+        $this->validator->set('first', new SectionConfiguration([
             'prefix' => '/',
             'host' => '^/',
         ]));
 
-        $this->assertTrue($validator->validate());
+        $this->assertTrue($this->validator->validate());
     }
 
     /**
@@ -63,14 +69,13 @@ final class AppSectionsValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function it_validates_a_section_with_host_and_custom_matching_host_pattern_as_positive()
     {
-        $validator = new AppSectionsValidator();
-        $validator->set('first', new SectionConfiguration([
+        $this->validator->set('first', new SectionConfiguration([
             'prefix' => '/',
             'host' => 'example.com',
             'host_pattern' => 'example.com$',
         ]));
 
-        $this->assertTrue($validator->validate());
+        $this->assertTrue($this->validator->validate());
     }
 
     /**
@@ -78,13 +83,12 @@ final class AppSectionsValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function it_validates_a_section_with_prefix_and_custom_matching_path_path_as_positive()
     {
-        $validator = new AppSectionsValidator();
-        $validator->set('first', new SectionConfiguration([
+        $this->validator->set('first', new SectionConfiguration([
             'prefix' => '/foobar',
             'path' => '^/foobar',
         ]));
 
-        $this->assertTrue($validator->validate());
+        $this->assertTrue($this->validator->validate());
     }
 
     /**
@@ -92,13 +96,12 @@ final class AppSectionsValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function it_matches_path_as_case_insensitive()
     {
-        $validator = new AppSectionsValidator();
-        $validator->set('first', new SectionConfiguration([
+        $this->validator->set('first', new SectionConfiguration([
             'prefix' => '/Something',
             'path' => '^/something',
         ]));
 
-        $this->assertTrue($validator->validate());
+        $this->assertTrue($this->validator->validate());
     }
 
     /**
@@ -106,13 +109,12 @@ final class AppSectionsValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function it_matches_host_as_case_insensitive()
     {
-        $validator = new AppSectionsValidator();
-        $validator->set('first', new SectionConfiguration([
+        $this->validator->set('first', new SectionConfiguration([
             'prefix' => '/Something',
             'path' => '^/something',
         ]));
 
-        $this->assertTrue($validator->validate());
+        $this->assertTrue($this->validator->validate());
     }
 
     /**
@@ -120,17 +122,16 @@ final class AppSectionsValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function it_validates_a_sections_with_same_prefix_and_differing_hosts_as_positive()
     {
-        $validator = new AppSectionsValidator();
-        $validator->set('first', new SectionConfiguration([
+        $this->validator->set('first', new SectionConfiguration([
             'prefix' => '/',
             'host' => 'example.com',
         ]));
-        $validator->set('second', new SectionConfiguration([
+        $this->validator->set('second', new SectionConfiguration([
             'prefix' => '/',
             'host' => 'example2.com',
         ]));
 
-        $this->assertTrue($validator->validate());
+        $this->assertTrue($this->validator->validate());
     }
 
     /**
@@ -138,17 +139,16 @@ final class AppSectionsValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function it_validates_a_sections_with_same_host_and_differing_prefix_as_positive()
     {
-        $validator = new AppSectionsValidator();
-        $validator->set('first', new SectionConfiguration([
+        $this->validator->set('first', new SectionConfiguration([
             'prefix' => '/',
             'host' => 'example.com',
         ]));
-        $validator->set('second', new SectionConfiguration([
+        $this->validator->set('second', new SectionConfiguration([
             'prefix' => '/something',
             'host' => 'example.com',
         ]));
 
-        $this->assertTrue($validator->validate());
+        $this->assertTrue($this->validator->validate());
     }
 
     /**
@@ -156,13 +156,12 @@ final class AppSectionsValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function it_throws_an_ValidatorException_when_section_conflicts()
     {
-        $validator = new AppSectionsValidator();
-        $validator->set('first', new SectionConfiguration([
+        $this->validator->set('first', new SectionConfiguration([
             'prefix' => '/',
             'host' => 'example.com',
         ]));
 
-        $validator->set('second', new SectionConfiguration([
+        $this->validator->set('second', new SectionConfiguration([
             'prefix' => '/', // same as 'first'
             'host' => 'example.com',
         ]));
@@ -177,7 +176,7 @@ final class AppSectionsValidatorTest extends \PHPUnit_Framework_TestCase
         $this->expectException(ValidatorException::class);
         $this->expectExceptionMessage($expectedMessage);
 
-        $validator->validate();
+        $this->validator->validate();
     }
 
     /**
@@ -188,32 +187,31 @@ final class AppSectionsValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function it_throws_an_ValidatorException_when_sections_conflicts()
     {
-        $validator = new AppSectionsValidator();
-        $validator->set('first', new SectionConfiguration([
+        $this->validator->set('first', new SectionConfiguration([
             'prefix' => '/',
             'host' => 'example.com',
         ]));
 
-        $validator->set('second', new SectionConfiguration([
+        $this->validator->set('second', new SectionConfiguration([
             'prefix' => '/', // same as 'first'
             'host' => 'example.com',
         ]));
 
-        $validator->set('third', new SectionConfiguration([
+        $this->validator->set('third', new SectionConfiguration([
             'prefix' => '/', // same as 'first'
             'host' => 'example.com',
         ]));
 
         //
-        $validator->set('first1', new SectionConfiguration([
+        $this->validator->set('first1', new SectionConfiguration([
             'prefix' => '/',
         ]));
 
-        $validator->set('second2', new SectionConfiguration([
+        $this->validator->set('second2', new SectionConfiguration([
             'prefix' => '/', // same as 'first1'
         ]));
 
-        $validator->set('good', new SectionConfiguration([
+        $this->validator->set('good', new SectionConfiguration([
             'prefix' => '/something',
         ]));
 
@@ -229,25 +227,6 @@ final class AppSectionsValidatorTest extends \PHPUnit_Framework_TestCase
         $this->expectException(ValidatorException::class);
         $this->expectExceptionMessage($expectedMessage);
 
-        $validator->validate();
-    }
-
-    /**
-     * @test
-     */
-    public function it_allows_to_use_boolean_instead_exception_for_failure()
-    {
-        $validator = new AppSectionsValidator();
-        $validator->set('first', new SectionConfiguration([
-            'prefix' => '/',
-            'host' => 'example.com',
-        ]));
-
-        $validator->set('second', new SectionConfiguration([
-            'prefix' => '/', // same as 'first'
-            'host' => 'example.com',
-        ]));
-
-        $this->assertFalse($validator->validate(false));
+        $this->validator->validate();
     }
 }

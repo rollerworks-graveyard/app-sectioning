@@ -32,18 +32,8 @@ use Symfony\Component\HttpFoundation\RequestMatcher;
  */
 final class SectionsConfigurator
 {
-    /**
-     * @var array[]
-     */
     private $sections = [];
 
-    /**
-     * Set a section to be processed.
-     *
-     * @param string               $name
-     * @param SectionConfiguration $config
-     * @param string               $servicePrefix
-     */
     public function set(string $name, SectionConfiguration $config, string $servicePrefix)
     {
         $this->sections[$name] = $config->getConfig();
@@ -72,7 +62,7 @@ final class SectionsConfigurator
      */
     public function registerToContainer(ContainerBuilder $container)
     {
-        foreach ($this->processSections($this->sections) as $name => $config) {
+        foreach ($this->resolveSections($this->sections) as $name => $config) {
             $servicePrefix = rtrim($config['service_prefix'], '.').'.';
 
             $container->setParameter($servicePrefix.$name.'.host', (string) $config['host']);
@@ -98,31 +88,34 @@ final class SectionsConfigurator
      */
     public function exportConfiguration(): array
     {
-        return $this->processSections($this->sections);
+        return $this->resolveSections($this->sections);
     }
 
-    private function processSections(array $sections): array
+    private function resolveSections(array $sections): array
     {
-        $hostsSections = [];
+        $hostsSections = $this->groupSectionsPerHost($sections);
 
-        // First step is to group sections per host
-        foreach ($sections as $name => $config) {
-            $hostsSections[$config['host']][$name] = $config;
-        }
-
-        $sections = [];
-
-        // Now process each section in a group to ensure they are (auto) configured.
         foreach ($hostsSections as $sectionsInHost) {
             foreach ($sectionsInHost as $name => $hostSections) {
-                $sections[$name] = $this->setSectionPath($name, $sectionsInHost);
+                $sections[$name] = $this->generateSectionPath($name, $sectionsInHost);
             }
         }
 
         return $sections;
     }
 
-    private function setSectionPath(string $name, array $allSections): array
+    private function groupSectionsPerHost(array $sections)
+    {
+        $hostsSections = [];
+
+        foreach ($sections as $name => $config) {
+            $hostsSections[$config['host']][$name] = $config;
+        }
+
+        return $hostsSections;
+    }
+
+    private function generateSectionPath(string $name, array $allSections): array
     {
         $config = $allSections[$name];
         unset($allSections[$name]);

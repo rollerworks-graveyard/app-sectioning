@@ -11,24 +11,15 @@
 
 namespace ParkManager\Bundle\AppSectioning;
 
-/**
- * The SectionConfiguration holds the configuration for a single app section.
- */
 final class SectionConfiguration
 {
     private $config;
 
     public function __construct(array $config)
     {
-        if (!isset($config['prefix']) || '' === $config['prefix']) {
-            throw new \InvalidArgumentException('AppSection prefix cannot be empty. Use at least "/".');
-        }
+        $this->validateInputConfig($config);
 
-        $config['prefix'] = trim(mb_strtolower($config['prefix']), '/');
-
-        if ('/' !== $config['prefix']) {
-            $config['prefix'] .= '/';
-        }
+        $config['prefix'] = $this->normalizePrefix($config['prefix']);
 
         if (isset($config['host']) && '' !== (string) $config['host']) {
             $config['host'] = mb_strtolower($config['host']);
@@ -55,5 +46,23 @@ final class SectionConfiguration
     public function getConfig(): array
     {
         return $this->config;
+    }
+
+    private function validateInputConfig(array $config)
+    {
+        if (!isset($config['prefix']) || '' === $config['prefix']) {
+            throw new \InvalidArgumentException('AppSection prefix cannot be empty. Use at least "/".');
+        }
+    }
+
+    private function normalizePrefix(string $prefix)
+    {
+        $prefix = trim(mb_strtolower($prefix), '/');
+
+        if ('/' !== $prefix) {
+            $prefix .= '/';
+        }
+
+        return $prefix;
     }
 }
