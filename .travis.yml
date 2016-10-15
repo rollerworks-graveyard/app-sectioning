@@ -1,35 +1,42 @@
 language: php
 
-matrix:
-    include:
-        - php: 7.0
-        # Use the newer stack for HHVM as HHVM does not support Precise anymore since a long time and so Precise has an outdated version
-        #- php: hhvm-3.12
-        #  sudo: required
-        #  dist: trusty
-        #  group: edge
-        - php: 7.0
-          env: DEPENDENCIES='low'
-        - php: 7.1
-          env: DEPENDENCIES='dev'
-    allow_failures:
-        - env: DEPENDENCIES='dev'
-    fast_finish: true
-
 sudo: false
+
+matrix:
+    fast_finish: true
+    include:
+#        - php: 7.0
+#        - php: 7.1
+#        - php: 7.0
+#          env: COMPOSER_FLAGS="--prefer-stable --prefer-lowest"
+        - php: 7.0
+          env: SYMFONY_VERSION="~3.2@dev" COMPOSER_FLAGS="--prefer-stable" MINIMUM_STABILITY="dev"
 
 cache:
     directories:
         - $HOME/.composer/cache/files
 
 before_install:
-    - composer self-update --preview
+    - |
+      if [ $TRAVIS_TAG ]; then
+          # for tag building for release we don't need to collect code coverage, let us turn off xdebug completely
+          phpenv config-rm xdebug.ini || return 0
+      else
+          # for regular build we care about collecting code coverage, let us turn off xdebug only for installation part
+          mv $HOME/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini $HOME/xdebug.ini || return 0
+      fi
+    - composer self-update
+    # When the minimum requirement is changed update composer.
+    - 'if [ "$MINIMUM_STABILITY" != "" ]; then perl -pi -e "s/^}$/,\"minimum-stability\":\"${MINIMUM_STABILITY}\"}/" composer.json; fi'
+    - 'if [ "$SYMFONY_VERSION" != "" ]; then sed -i "s/\"symfony\/\([^\"]*\)\": \"[^\"]*\"/\"symfony\/\1\": \"$SYMFONY_VERSION\"/g" composer.json; fi'
+    - cat composer.json
 
 install:
-    - export SYMFONY_DEPRECATIONS_HELPER=strong
-    - if [ "$DEPENDENCIES" == "dev" ]; then perl -pi -e 's/^}$/,"minimum-stability":"dev"}/' composer.json; fi;
-    - if [ "$DEPENDENCIES" != "low" ]; then travis_retry composer update; fi;
-    - if [ "$DEPENDENCIES" == "low" ]; then travis_retry composer update --prefer-lowest; fi;
+    - travis_retry composer update $COMPOSER_FLAGS --no-interaction
 
 script:
-    - vendor/bin/phpunit --configuration phpunit.xml.dist --verbose
+    - cp $HOME/xdebug.ini $HOME/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini || return 0
+    - vendor/bin/phpunit --verbose --coverage-clover build/logs/clover.xml
+
+after_success:
+    - php vendor/bin/coveralls -v
