@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Rollerworks AppSectioningBundle package.
  *
@@ -156,7 +158,7 @@ final class AppSectionsPassTest extends AbstractCompilerPassTestCase
 
     protected function registerCompilerPass(ContainerBuilder $container)
     {
-        $container->register('routing.loader', get_class($this->getMock(LoaderInterface::class)));
+        $container->register('routing.loader', get_class($this->createMock(LoaderInterface::class)));
         $container->register('park_manager.app_section.route_loader', AppSectionRouteLoader::class)
             ->setArguments([new Reference('routing.loader'), []]);
 

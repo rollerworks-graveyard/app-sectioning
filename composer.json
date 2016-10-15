@@ -14,7 +14,9 @@
         "symfony/framework-bundle": "^2.8|^3.0"
     },
     "require-dev": {
-        "matthiasnoback/symfony-dependency-injection-test": "^0.7.6"
+        "matthiasnoback/symfony-dependency-injection-test": "^0.7.6",
+        "phpunit/phpunit": "^5.6.1",
+        "sllh/php-cs-fixer-styleci-bridge": "^2.1"
     },
     "autoload": {
         "psr-4": {
