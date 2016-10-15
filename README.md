@@ -1,4 +1,4 @@
-Park-Manager AppSectioning configurator
+Rollerworks AppSectioning configurator
 =======================================
 
 The AppSectioning configurator helps with separating your Symfony application
@@ -26,10 +26,10 @@ used will overwrite the other one (without warning).
 
 This bundle is best used for multi-section applications and not decoupled bundles.
 
-Park-Manager
+Rollerworks
 ------------
 
-Park-Manager is your friend in hosting software. Visit [Park-Manager.com](http://www.park-manager.com)
+Rollerworks is your friend in hosting software. Visit [Rollerworks.com](http://www.rollerworks.com)
 
 Requirements
 ------------

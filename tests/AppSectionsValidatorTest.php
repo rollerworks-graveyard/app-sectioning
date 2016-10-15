@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Park-Manager AppSectioningBundle package.
+ * This file is part of the Rollerworks AppSectioningBundle package.
  *
  * (c) Sebastiaan Stok <s.stok@rollerscapes.net>
  *
@@ -9,11 +9,11 @@
  * with this source code in the file LICENSE.
  */
 
-namespace ParkManager\Bundle\AppSectioning\Tests;
+namespace Rollerworks\Bundle\AppSectioning\Tests;
 
-use ParkManager\Bundle\AppSectioning\AppSectionsValidator;
-use ParkManager\Bundle\AppSectioning\Exception\ValidatorException;
-use ParkManager\Bundle\AppSectioning\SectionConfiguration;
+use Rollerworks\Bundle\AppSectioning\AppSectionsValidator;
+use Rollerworks\Bundle\AppSectioning\Exception\ValidatorException;
+use Rollerworks\Bundle\AppSectioning\SectionConfiguration;
 
 final class AppSectionsValidatorTest extends \PHPUnit_Framework_TestCase
 {

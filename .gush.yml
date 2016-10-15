@@ -1,5 +1,5 @@
 # Gush configuration file, any comments will be lost.
-meta-header: "This file is part of the Park-Manager AppSectioningBundle package.\n\n(c) Sebastiaan Stok <s.stok@rollerscapes.net>\n\nThis source file is subject to the MIT license that is bundled\nwith this source code in the file LICENSE."
+meta-header: "This file is part of the Rollerworks AppSectioningBundle package.\n\n(c) Sebastiaan Stok <s.stok@rollerscapes.net>\n\nThis source file is subject to the MIT license that is bundled\nwith this source code in the file LICENSE."
 table-pr:
     bug_fix: ['Bug Fix?', 'no']
     new_feature: ['New Feature?', 'no']
@@ -16,7 +16,7 @@ pr_type:
     - security
 repo_adapter: github
 issue_tracker: github
-repo_org: park-manager
+repo_org: rollerworks
 repo_name: app-sectioning-bundle
-issue_project_org: park-manager
+issue_project_org: rollerworks
 issue_project_name: app-sectioning-bundle

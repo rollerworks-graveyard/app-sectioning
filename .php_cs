@@ -1,7 +1,7 @@
 <?php
 
 $header = <<<EOF
-This file is part of the Park-Manager AppSectioningBundle package.
+This file is part of the Rollerworks AppSectioningBundle package.
 
 (c) Sebastiaan Stok <s.stok@rollerscapes.net>
 

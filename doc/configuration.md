@@ -19,7 +19,7 @@ namespace Acme\FrontendBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use ParkManager\Bundle\AppSectioning\DependencyInjection\SectioningConfigurator;
+use Rollerworks\Bundle\AppSectioning\DependencyInjection\SectioningConfigurator;
 
 class DatabaseConfiguration implements ConfigurationInterface
 {
@@ -57,7 +57,7 @@ namespace Acme\FrontendBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
-use ParkManager\Bundle\AppSectioning\DependencyInjection\SectioningFactory;
+use Rollerworks\Bundle\AppSectioning\DependencyInjection\SectioningFactory;
 
 class AcmeFrontendExtension extends ConfigurableExtension
 {
@@ -120,4 +120,4 @@ Placeholders for eg. `{_locale}` or more tld's/IP nets in the host, are not supp
 *A negative lookahead regex pattern must only be used when there are sections that match,
 else `^/(?!(user)/)` is going to fail with `/user/` in the backend section (with it a different host).*
 
-See also [Add placeholder support for prefix and host in the issue tracker](https://github.com/park-manager/app-sectioning-bundle/issues/1)
+See also [Add placeholder support for prefix and host in the issue tracker](https://github.com/rollerworks/app-sectioning-bundle/issues/1)

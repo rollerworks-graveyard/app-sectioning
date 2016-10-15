@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Park-Manager AppSectioningBundle package.
+ * This file is part of the Rollerworks AppSectioningBundle package.
  *
  * (c) Sebastiaan Stok <s.stok@rollerscapes.net>
  *
@@ -9,9 +9,9 @@
  * with this source code in the file LICENSE.
  */
 
-namespace ParkManager\Bundle\AppSectioning;
+namespace Rollerworks\Bundle\AppSectioning;
 
-use ParkManager\Bundle\AppSectioning\Exception\ValidatorException;
+use Rollerworks\Bundle\AppSectioning\Exception\ValidatorException;
 
 /**
  * The AppSectionsValidator validates whether the provided Application sections

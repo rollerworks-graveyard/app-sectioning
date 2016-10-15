@@ -1,5 +1,5 @@
 {
-    "name": "park-manager/app-sectioning-bundle",
+    "name": "rollerworks/app-sectioning-bundle",
     "description": "Configuration helper for separating your Symfony application into multiple sections",
     "type": "symfony-bundle",
     "license": "MIT",
@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "php": ">=7.0",
+        "php": "^7.0",
         "symfony/framework-bundle": "^2.8|^3.0"
     },
     "require-dev": {
@@ -18,12 +18,12 @@
     },
     "autoload": {
         "psr-4": {
-            "ParkManager\\Bundle\\AppSectioning\\": "src/"
+            "Rollerworks\\Bundle\\AppSectioning\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "ParkManager\\Bundle\\AppSectioning\\Tests\\": "tests/"
+            "Rollerworks\\Bundle\\AppSectioning\\Tests\\": "tests/"
         }
     }
 }
