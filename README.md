@@ -1,5 +1,5 @@
 Rollerworks AppSectioning configurator
-=======================================
+======================================
 
 The AppSectioning configurator helps with separating your Symfony application
 into multiple sections (eg. frontend and backend). Each with there own
@@ -19,17 +19,12 @@ Only when both share the same host group and only there is a conflict.
 You then use these generated parameters for routing and the security firewalls.
 
 **Coming-up:** At this moment you can only use static values, but in the future
-it will be possible to use placeholders (with conflict detection).
+it will be possible to use placeholders (with limited conflict detection).
 
 **Caution:** Registering a section name that is already
 used will overwrite the other one (without warning).
 
 This bundle is best used for multi-section applications and not decoupled bundles.
-
-Rollerworks
-------------
-
-Rollerworks is your friend in hosting software. Visit [Rollerworks.com](http://www.rollerworks.com)
 
 Requirements
 ------------
@@ -66,8 +61,4 @@ For more information on SemVer, please visit <http://semver.org/>.
 License
 -------
 
-The package is provided under the none-restrictive MIT license,
-you are free to use it for any free or proprietary product/application,
-without restrictions.
-
-[LICENSE](LICENSE)
+The package is provided under the [MIT license](LICENSE).
