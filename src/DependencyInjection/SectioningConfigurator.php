@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Park-Manager AppSectioningBundle package.
+ * This file is part of the Rollerworks AppSectioningBundle package.
  *
  * (c) Sebastiaan Stok <s.stok@rollerscapes.net>
  *
@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace ParkManager\Bundle\AppSectioning\DependencyInjection;
+namespace Rollerworks\Bundle\AppSectioning\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;

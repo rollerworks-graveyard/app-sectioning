@@ -18,7 +18,7 @@
     </php>
 
     <testsuites>
-        <testsuite name="ParkManager AppSectioningBundle Test Suite">
+        <testsuite name="Rollerworks AppSectioningBundle Test Suite">
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>

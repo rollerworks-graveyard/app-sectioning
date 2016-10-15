@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Park-Manager AppSectioningBundle package.
+ * This file is part of the Rollerworks AppSectioningBundle package.
  *
  * (c) Sebastiaan Stok <s.stok@rollerscapes.net>
  *
@@ -9,9 +9,9 @@
  * with this source code in the file LICENSE.
  */
 
-namespace ParkManager\Bundle\AppSectioning\DependencyInjection;
+namespace Rollerworks\Bundle\AppSectioning\DependencyInjection;
 
-use ParkManager\Bundle\AppSectioning\SectionConfiguration;
+use Rollerworks\Bundle\AppSectioning\SectionConfiguration;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 

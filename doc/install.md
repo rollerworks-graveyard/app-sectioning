@@ -5,7 +5,7 @@ Open a command console, enter your project directory and execute the
 following command to download the latest stable version of this bundle:
 
 ```bash
-$ php composer.phar require park-manager/app-sectioning-bundle
+$ php composer.phar require rollerworks/app-sectioning-bundle
 ```
 
 This command requires you to have Composer installed globally, as explained
@@ -26,7 +26,7 @@ class AppKernel extends Kernel
     {
         $bundles = [
             // ...
-            new ParkManager\Bundle\AppSectioning\ParkManagerAppSectioningBundle(),
+            new Rollerworks\Bundle\AppSectioning\RollerworksAppSectioningBundle(),
             // ...
         ];
 
@@ -37,6 +37,6 @@ class AppKernel extends Kernel
 }
 ```
 
-You are now ready to use the Park-Manager AppSectioning configurator bundle.
+You are now ready to use the Rollerworks AppSectioning configurator bundle.
 
 Continue to [Configuration](configuration.md) to learn more about usage and implementation.
