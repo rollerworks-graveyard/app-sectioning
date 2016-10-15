@@ -22,6 +22,9 @@ cache:
     directories:
         - $HOME/.composer/cache/files
 
+before_install:
+    - composer self-update --preview
+
 install:
     - export SYMFONY_DEPRECATIONS_HELPER=strong
     - if [ "$DEPENDENCIES" == "dev" ]; then perl -pi -e 's/^}$/,"minimum-stability":"dev"}/' composer.json; fi;
