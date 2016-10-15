@@ -30,35 +30,35 @@ final class SectioningFactoryTest extends AbstractContainerBuilderTestCase
         $this->assertSame($factory, $factory->set('backend', ['prefix' => 'backend', 'host' => 'example.com']));
 
         $this->assertContainerBuilderHasService(
-            'park_manager.app_section.acme.section.frontend',
+            'rollerworks.app_section.acme.section.frontend',
             SectionConfiguration::class
         );
 
         $this->assertContainerBuilderHasService(
-            'park_manager.app_section.acme.section.backend',
+            'rollerworks.app_section.acme.section.backend',
             SectionConfiguration::class
         );
 
         $this->assertContainerBuilderHasServiceDefinitionWithTag(
-            'park_manager.app_section.acme.section.frontend',
-            'park_manager.app_section',
+            'rollerworks.app_section.acme.section.frontend',
+            'rollerworks.app_section',
             ['service_prefix' => 'acme.section', 'section_name' => 'frontend']
         );
 
         $this->assertContainerBuilderHasServiceDefinitionWithTag(
-            'park_manager.app_section.acme.section.backend',
-            'park_manager.app_section',
+            'rollerworks.app_section.acme.section.backend',
+            'rollerworks.app_section',
             ['service_prefix' => 'acme.section', 'section_name' => 'backend']
         );
 
         $this->assertContainerBuilderHasServiceDefinitionWithArgument(
-            'park_manager.app_section.acme.section.frontend',
+            'rollerworks.app_section.acme.section.frontend',
             0,
             ['prefix' => '/', 'host' => 'example.com']
         );
 
         $this->assertContainerBuilderHasServiceDefinitionWithArgument(
-            'park_manager.app_section.acme.section.backend',
+            'rollerworks.app_section.acme.section.backend',
             0,
             ['prefix' => 'backend', 'host' => 'example.com']
         );
@@ -81,70 +81,70 @@ final class SectioningFactoryTest extends AbstractContainerBuilderTestCase
         $this->assertSame($factory, $factory->set('backend', ['prefix' => 'backend', 'host' => 'example.com']));
 
         $this->assertContainerBuilderHasService(
-            'park_manager.app_section.acme.section.frontend',
+            'rollerworks.app_section.acme.section.frontend',
             SectionConfiguration::class
         );
 
         $this->assertContainerBuilderHasService(
-            'park_manager.app_section.acme.section.backend',
+            'rollerworks.app_section.acme.section.backend',
             SectionConfiguration::class
         );
 
         $this->assertContainerBuilderHasServiceDefinitionWithTag(
-            'park_manager.app_section.acme.section.frontend',
-            'park_manager.app_section',
+            'rollerworks.app_section.acme.section.frontend',
+            'rollerworks.app_section',
             ['service_prefix' => 'acme.section', 'section_name' => 'frontend']
         );
 
         $this->assertContainerBuilderHasServiceDefinitionWithTag(
-            'park_manager.app_section.acme.section.backend',
-            'park_manager.app_section',
+            'rollerworks.app_section.acme.section.backend',
+            'rollerworks.app_section',
             ['service_prefix' => 'acme.section', 'section_name' => 'backend']
         );
 
         $this->assertContainerBuilderHasServiceDefinitionWithArgument(
-            'park_manager.app_section.acme.section.frontend',
+            'rollerworks.app_section.acme.section.frontend',
             0,
             ['prefix' => '/', 'host' => 'example.com']
         );
 
         $this->assertContainerBuilderHasServiceDefinitionWithArgument(
-            'park_manager.app_section.acme.section.backend',
+            'rollerworks.app_section.acme.section.backend',
             0,
             ['prefix' => 'backend', 'host' => 'example.com']
         );
 
         // second group
         $this->assertContainerBuilderHasService(
-            'park_manager.app_section.rollerworks.section.frontend',
+            'rollerworks.app_section.rollerworks.section.frontend',
             SectionConfiguration::class
         );
 
         $this->assertContainerBuilderHasService(
-            'park_manager.app_section.rollerworks.section.backend',
+            'rollerworks.app_section.rollerworks.section.backend',
             SectionConfiguration::class
         );
 
         $this->assertContainerBuilderHasServiceDefinitionWithTag(
-            'park_manager.app_section.rollerworks.section.frontend',
-            'park_manager.app_section',
+            'rollerworks.app_section.rollerworks.section.frontend',
+            'rollerworks.app_section',
             ['service_prefix' => 'rollerworks.section', 'section_name' => 'frontend']
         );
 
         $this->assertContainerBuilderHasServiceDefinitionWithTag(
-            'park_manager.app_section.rollerworks.section.backend',
-            'park_manager.app_section',
+            'rollerworks.app_section.rollerworks.section.backend',
+            'rollerworks.app_section',
             ['service_prefix' => 'rollerworks.section', 'section_name' => 'backend']
         );
 
         $this->assertContainerBuilderHasServiceDefinitionWithArgument(
-            'park_manager.app_section.rollerworks.section.frontend',
+            'rollerworks.app_section.rollerworks.section.frontend',
             0,
             ['prefix' => '/', 'host' => 'example.com']
         );
 
         $this->assertContainerBuilderHasServiceDefinitionWithArgument(
-            'park_manager.app_section.rollerworks.section.backend',
+            'rollerworks.app_section.rollerworks.section.backend',
             0,
             ['prefix' => 'backend', 'host' => 'example.com']
         );

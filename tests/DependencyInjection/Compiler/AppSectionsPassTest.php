@@ -68,7 +68,7 @@ final class AppSectionsPassTest extends AbstractCompilerPassTestCase
 
         // Note. This assertion is only done once as the values are provided external
         // This only ensures the service receives the correct values
-        $this->assertContainerBuilderHasServiceDefinitionWithArgument('park_manager.app_section.route_loader', 1, [
+        $this->assertContainerBuilderHasServiceDefinitionWithArgument('rollerworks.app_section.route_loader', 1, [
             'frontend' => [
                 'prefix' => '/',
                 'host' => 'example.com',
@@ -159,7 +159,7 @@ final class AppSectionsPassTest extends AbstractCompilerPassTestCase
     protected function registerCompilerPass(ContainerBuilder $container)
     {
         $container->register('routing.loader', get_class($this->createMock(LoaderInterface::class)));
-        $container->register('park_manager.app_section.route_loader', AppSectionRouteLoader::class)
+        $container->register('rollerworks.app_section.route_loader', AppSectionRouteLoader::class)
             ->setArguments([new Reference('routing.loader'), []]);
 
         $container->addCompilerPass(new AppSectionsPass());

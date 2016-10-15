@@ -51,7 +51,7 @@ final class AppSectionsPass implements CompilerPassInterface
 
         $configurator->registerToContainer($container);
 
-        $routeLoader = $container->findDefinition('park_manager.app_section.route_loader');
+        $routeLoader = $container->findDefinition('rollerworks.app_section.route_loader');
         $routeLoader->replaceArgument(1, $configurator->exportConfiguration());
     }
 }

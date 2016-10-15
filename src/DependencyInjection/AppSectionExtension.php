@@ -28,7 +28,7 @@ final class AppSectionExtension extends Extension
 
     public function getAlias()
     {
-        return 'park_manager_app_section';
+        return 'rollerworks_app_section';
     }
 
     public function getConfiguration(array $config, ContainerBuilder $container)

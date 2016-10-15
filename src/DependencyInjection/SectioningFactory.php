@@ -27,7 +27,7 @@ use Symfony\Component\DependencyInjection\Definition;
  */
 final class SectioningFactory
 {
-    const TAG_NAME = 'park_manager.app_section';
+    const TAG_NAME = 'rollerworks.app_section';
 
     /**
      * @var ContainerBuilder
@@ -70,7 +70,7 @@ final class SectioningFactory
         );
 
         $this->container->setDefinition(
-            sprintf('park_manager.app_section.%s.%s', $this->servicePrefix, $name),
+            sprintf('rollerworks.app_section.%s.%s', $this->servicePrefix, $name),
             $sectionDef
         );
 
