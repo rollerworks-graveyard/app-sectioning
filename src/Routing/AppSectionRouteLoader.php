@@ -42,7 +42,7 @@ final class AppSectionRouteLoader extends Loader
      * @param LoaderInterface $loader   Route loader
      * @param array           $sections Sections as associative array, each entry
      *                                  must contain at least a 'prefix', and optionally
-     *                                  host_pattern, host, host_requirements.
+     *                                  host_pattern, host, host_requirements
      */
     public function __construct(LoaderInterface $loader, array $sections)
     {

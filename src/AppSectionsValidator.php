@@ -43,7 +43,7 @@ final class AppSectionsValidator
     /**
      * Validates the provided configuration for duplicated prefixes in the same host group.
      *
-     * @throws ValidatorException When one ore more sections have a conflicting configuration.
+     * @throws ValidatorException When one ore more sections have a conflicting configuration
      */
     public function validate(): bool
     {

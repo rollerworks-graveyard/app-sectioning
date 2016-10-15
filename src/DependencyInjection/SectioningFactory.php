@@ -40,8 +40,8 @@ final class SectioningFactory
     /**
      * Constructor.
      *
-     * @param ContainerBuilder $container     Service container builder.
-     * @param string           $servicePrefix Prefix to use for registered services.
+     * @param ContainerBuilder $container     Service container builder
+     * @param string           $servicePrefix Prefix to use for registered services
      */
     public function __construct(ContainerBuilder $container, string $servicePrefix)
     {
@@ -52,10 +52,10 @@ final class SectioningFactory
     /**
      * Set the configuration for a section.
      *
-     * @param string $name   Name of the section, must be unique within the service-prefix.
-     * @param array  $config Configuration of the section, must contain a 'prefix' key.
+     * @param string $name   Name of the section, must be unique within the service-prefix
+     * @param array  $config Configuration of the section, must contain a 'prefix' key
      *
-     * @return SectioningFactory Fluent interface.
+     * @return SectioningFactory Fluent interface
      */
     public function set(string $name, array $config): SectioningFactory
     {
