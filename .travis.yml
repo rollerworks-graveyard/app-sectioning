@@ -2,41 +2,41 @@ language: php
 
 sudo: false
 
+branches:
+    only:
+        - master
+
 matrix:
-    fast_finish: true
     include:
-#        - php: 7.0
-#        - php: 7.1
-#        - php: 7.0
-#          env: COMPOSER_FLAGS="--prefer-stable --prefer-lowest"
-        - php: 7.0
-          env: SYMFONY_VERSION="~3.2@dev" COMPOSER_FLAGS="--prefer-stable" MINIMUM_STABILITY="dev"
+        - php: '7.1'
+          env: coverage=1
+        - php: '7.1'
+          env: deps='low'
+        - php: '7.1'
+          env: deps='dev'
 
 cache:
     directories:
-        - $HOME/.composer/cache/files
+        - $HOME/.composer/cache
 
 before_install:
-    - |
-      if [ $TRAVIS_TAG ]; then
-          # for tag building for release we don't need to collect code coverage, let us turn off xdebug completely
-          phpenv config-rm xdebug.ini || return 0
-      else
-          # for regular build we care about collecting code coverage, let us turn off xdebug only for installation part
-          mv $HOME/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini $HOME/xdebug.ini || return 0
-      fi
-    - composer self-update
-    # When the minimum requirement is changed update composer.
-    - 'if [ "$MINIMUM_STABILITY" != "" ]; then perl -pi -e "s/^}$/,\"minimum-stability\":\"${MINIMUM_STABILITY}\"}/" composer.json; fi'
+    - phpenv config-rm xdebug.ini || echo "xdebug not available"
+    - if [[ $coverage = 1 ]]; then mkdir -p build/logs build/cov; fi
+    - if [[ $coverage = 1 ]]; then wget https://phar.phpunit.de/phpcov.phar; fi
+    - if [[ $coverage = 1 ]]; then wget https://github.com/satooshi/php-coveralls/releases/download/v1.0.1/coveralls.phar; fi
     - 'if [ "$SYMFONY_VERSION" != "" ]; then sed -i "s/\"symfony\/\([^\"]*\)\": \"[^\"]*\"/\"symfony\/\1\": \"$SYMFONY_VERSION\"/g" composer.json; fi'
-    - cat composer.json
+    - export PATH="$PATH:$HOME/.composer/vendor/bin"
 
 install:
-    - travis_retry composer update $COMPOSER_FLAGS --no-interaction
+    - if [[ $coverage = 1 ]]; then composer require --dev --no-update 'phpunit/php-code-coverage:^4.0.1'; fi
+    - if [[ ! $deps ]]; then composer update --prefer-dist --no-progress --no-suggest --ansi; fi
+    - if [[ $deps = 'dev' ]]; then composer config minimum-stability dev && composer update --prefer-dist --no-progress --no-suggest --ansi ; fi
+    - if [[ $deps = 'low' ]]; then composer update --prefer-dist --no-progress --no-suggest --prefer-stable --prefer-lowest --ansi; fi
 
 script:
-    - cp $HOME/xdebug.ini $HOME/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini || return 0
-    - vendor/bin/phpunit --verbose --coverage-clover build/logs/clover.xml
+    - export SYMFONY_DEPRECATIONS_HELPER=strict
+    - if [[ $coverage = 1 ]]; then phpdbg -qrr -dmemory_limit=-1 vendor/bin/phpunit  --verbose --coverage-php build/cov/coverage-phpunit.cov; else vendor/bin/phpunit --verbose; fi
+    - if [[ $coverage = 1 ]]; then phpdbg -qrr phpcov.phar merge --clover build/logs/clover.xml build/cov; fi
 
 after_success:
-    - php vendor/bin/coveralls -v
+    - if [[ $coverage = 1 ]]; then travis_retry php coveralls.phar; fi
