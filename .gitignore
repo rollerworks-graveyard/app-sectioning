@@ -1,9 +1,5 @@
-/composer.lock
-/*.phar
-/.php_cs.cache
-
-# test config
 /phpunit.xml
-
-# dirs
+/composer.lock
+*.phar
 /vendor/
+.php_cs.cache

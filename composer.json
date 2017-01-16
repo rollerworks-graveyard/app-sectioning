@@ -22,7 +22,8 @@
     "autoload": {
         "psr-4": {
             "Rollerworks\\Bundle\\AppSectioning\\": "src/"
-        }
+        },
+        "exclude-from-classmap": ["test/"]
     },
     "autoload-dev": {
         "psr-4": {
