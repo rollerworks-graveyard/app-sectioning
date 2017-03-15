@@ -37,7 +37,7 @@ final class SectioningConfigurator
      *
      * @return NodeDefinition
      *
-     * @link https://symfony.com/doc/current/components/config/definition.html#appending-sections
+     * @see https://symfony.com/doc/current/components/config/definition.html#appending-sections
      */
     public static function createSection(string $name): NodeDefinition
     {
