@@ -13,9 +13,10 @@ declare(strict_types=1);
 
 namespace Rollerworks\Bundle\AppSectioning\Tests;
 
+use PHPUnit\Framework\TestCase;
 use Rollerworks\Bundle\AppSectioning\SectionConfiguration;
 
-final class SectionConfigurationTest extends \PHPUnit_Framework_TestCase
+final class SectionConfigurationTest extends TestCase
 {
     /**
      * @test

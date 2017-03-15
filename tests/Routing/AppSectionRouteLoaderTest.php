@@ -13,12 +13,13 @@ declare(strict_types=1);
 
 namespace Rollerworks\Bundle\AppSectioning\Tests\Routing;
 
+use PHPUnit\Framework\TestCase;
 use Rollerworks\Bundle\AppSectioning\Routing\AppSectionRouteLoader;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
-final class AppSectionRouteLoaderTest extends \PHPUnit_Framework_TestCase
+final class AppSectionRouteLoaderTest extends TestCase
 {
     /**
      * @var AppSectionRouteLoader
