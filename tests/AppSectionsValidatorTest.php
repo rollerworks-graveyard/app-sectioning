@@ -13,11 +13,12 @@ declare(strict_types=1);
 
 namespace Rollerworks\Bundle\AppSectioning\Tests;
 
+use PHPUnit\Framework\TestCase;
 use Rollerworks\Bundle\AppSectioning\AppSectionsValidator;
 use Rollerworks\Bundle\AppSectioning\Exception\ValidatorException;
 use Rollerworks\Bundle\AppSectioning\SectionConfiguration;
 
-final class AppSectionsValidatorTest extends \PHPUnit_Framework_TestCase
+final class AppSectionsValidatorTest extends TestCase
 {
     /** @var AppSectionsValidator */
     private $validator;

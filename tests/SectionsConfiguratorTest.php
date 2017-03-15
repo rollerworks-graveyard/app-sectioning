@@ -13,12 +13,13 @@ declare(strict_types=1);
 
 namespace Rollerworks\Bundle\AppSectioning\Tests;
 
+use PHPUnit\Framework\TestCase;
 use Rollerworks\Bundle\AppSectioning\SectionConfiguration;
 use Rollerworks\Bundle\AppSectioning\SectionsConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpFoundation\RequestMatcher;
 
-final class SectionsConfiguratorTest extends \PHPUnit_Framework_TestCase
+final class SectionsConfiguratorTest extends TestCase
 {
     /**
      * @test
