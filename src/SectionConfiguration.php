@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Rollerworks\Bundle\AppSectioning;
 
+use Symfony\Component\Routing\Route;
+
+/** @internal */
 final class SectionConfiguration
 {
     private $config;
@@ -21,29 +24,24 @@ final class SectionConfiguration
     {
         $this->validateInputConfig($config);
 
+        $config = array_merge(
+            [
+                'host' => null,
+                'defaults' => [],
+                'requirements' => [],
+            ],
+            $config
+        );
+
         $config['prefix'] = $this->normalizePrefix($config['prefix']);
-
-        if (isset($config['host']) && '' !== (string) $config['host']) {
-            $config['host'] = mb_strtolower($config['host']);
-            $config['host_pattern'] = '^'.preg_quote($config['host']).'$';
-            $config['requirements']['host'] = $config['host_pattern'];
-        } else {
-            $config['host'] = null;
-            $config['host_pattern'] = null;
-            $config['requirements'] = [];
-        }
-
-        if (preg_match('#[{}]#', (string) $config['host']) || preg_match('#[{}]#', (string) $config['prefix'])) {
-            throw new \InvalidArgumentException(
-                'Placeholders in the "host" and/or "prefix" are not supported yet.'
-            );
-        }
+        $route = (new Route($config['prefix'], $config['defaults'], $config['requirements'], [], $config['host']))->compile();
+        $config['host_pattern'] = self::stripDelimiters($route->getHostRegex());
 
         $this->config = $config;
     }
 
     /**
-     * @return array [prefix, host]
+     * @return array [prefix, host, host_pattern, defaults, requirements]
      */
     public function getConfig(): array
     {
@@ -54,6 +52,12 @@ final class SectionConfiguration
     {
         if (!isset($config['prefix']) || '' === $config['prefix']) {
             throw new \InvalidArgumentException('AppSection prefix cannot be empty. Use at least "/".');
+        }
+
+        if (preg_match('#[{}]#', (string) $config['prefix'])) {
+            throw new \InvalidArgumentException(
+                'Placeholders in the "prefix" are not supported.'
+            );
         }
     }
 
@@ -66,5 +70,20 @@ final class SectionConfiguration
         }
 
         return $prefix;
+    }
+
+    private static function stripDelimiters(?string $regex)
+    {
+        if (null === $regex || mb_strlen($regex) < 2) {
+            return $regex;
+        }
+
+        $delimiter = $regex[0];
+
+        if ($regex[0] === '{') {
+            $delimiter = '}';
+        }
+
+        return mb_substr($regex, 1, mb_strrpos($regex, $delimiter, 0, 'UTF-8') - 1, 'UTF-8');
     }
 }

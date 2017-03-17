@@ -54,10 +54,10 @@ final class AppSectionsValidator
 
         foreach ($this->sections as $name => $config) {
             $prefix = $config['prefix'];
-            $host = $config['host'];
+            $host = $config['host_pattern'];
 
-            if ($this->isPrefixAlreadyUsed($prefixes, $host, $prefix)) {
-                $conflicts[$prefixes[$host][$prefix]][] = $name;
+            if (null !== $conflictingName = $this->findMatchingPattern($prefixes, $host, $prefix)) {
+                $conflicts[$conflictingName][] = $name;
             } else {
                 $prefixes[$host][$prefix] = $name;
             }
@@ -76,7 +76,7 @@ final class AppSectionsValidator
 
         foreach ($conflicts as $primary => $sections) {
             $failedSections[$primary] = [
-                $this->sections[$primary]['host'],
+                $this->sections[$primary]['host_pattern'],
                 $this->sections[$primary]['prefix'],
                 $sections,
             ];
@@ -85,8 +85,22 @@ final class AppSectionsValidator
         return $failedSections;
     }
 
-    private function isPrefixAlreadyUsed(array $prefixes, $host, $prefix)
+    private function findMatchingPattern(array $prefixes, ?string $hostPattern, string $prefix): ?string
     {
-        return isset($prefixes[$host][$prefix]);
+        if (isset($prefixes[$hostPattern][$prefix])) {
+            return $prefixes[$hostPattern][$prefix];
+        }
+
+        foreach ($prefixes as $sectionHostPatter => $config) {
+            if (null !== $hostPattern && !RegexEqualityChecker::equals($sectionHostPatter, '#'.$hostPattern.'#')) {
+                continue;
+            }
+
+            if (isset($config[$prefix])) {
+                return $config[$prefix];
+            }
+        }
+
+        return null;
     }
 }

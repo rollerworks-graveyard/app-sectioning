@@ -69,6 +69,8 @@ final class SectionsConfigurator
 
             $container->setParameter($servicePrefix.$name.'.host', (string) $config['host']);
             $container->setParameter($servicePrefix.$name.'.host_pattern', (string) ($config['host_pattern'] ?: '.*'));
+            $container->setParameter($servicePrefix.$name.'.host_requirements', $config['requirements']);
+            $container->setParameter($servicePrefix.$name.'.host_defaults', $config['defaults']);
             $container->setParameter($servicePrefix.$name.'.prefix', $config['prefix']);
             $container->setParameter($servicePrefix.$name.'.path', $config['path']);
             $container->register($servicePrefix.$name.'.request_matcher', RequestMatcher::class)->setArguments(
@@ -108,10 +110,28 @@ final class SectionsConfigurator
 
     private function groupSectionsPerHost(array $sections)
     {
+        $sections2 = $sections;
         $hostsSections = [];
+        $hostIndex = 0;
 
         foreach ($sections as $name => $config) {
-            $hostsSections[$config['host']][$name] = $config;
+            $hostsSections[$hostIndex][$name] = $config;
+
+            if (null === $config['host_pattern']) {
+                continue;
+            }
+
+            foreach ($sections2 as $name2 => $config2) {
+                if ($name2 === $name || null === $config2['host_pattern']) {
+                    continue;
+                }
+
+                if (RegexEqualityChecker::equals($config['host_pattern'], '#'.$config2['host_pattern'].'#si')) {
+                    $hostsSections[$hostIndex][$name2] = $config2;
+                }
+            }
+
+            ++$hostIndex;
         }
 
         return $hostsSections;
@@ -129,7 +149,7 @@ final class SectionsConfigurator
         }
 
         $negativePath = implode('|', array_map('preg_quote', array_filter(array_unique($negativePrefixes))));
-        $path = '^/'.preg_quote(ltrim($config['prefix'], '/'));
+        $path = '^/'.preg_quote(ltrim($config['prefix'], '/'), '#');
 
         if ($negativePath) {
             $path .= "(?!($negativePath)/)";

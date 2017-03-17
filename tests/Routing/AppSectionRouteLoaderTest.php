@@ -27,12 +27,21 @@ final class AppSectionRouteLoaderTest extends TestCase
     private $loader;
 
     const APP_SECTIONS = [
-        'api' => ['prefix' => 'api/'],
-        'frontend' => ['prefix' => '/'],
+        'api' => [
+            'prefix' => 'api/',
+            'host_requirements' => [],
+            'host_defaults' => [],
+        ],
+        'frontend' => [
+            'prefix' => '/',
+            'host_requirements' => [],
+            'host_defaults' => [],
+        ],
         'backend' => [
             'prefix' => '/',
-            'host' => 'example.com',
-            'requirements' => ['host' => 'example\.com'],
+            'host' => 'example.{tld}',
+            'host_requirements' => ['tld' => 'net|com'],
+            'host_defaults' => ['tld' => 'com'],
         ],
     ];
 
@@ -113,8 +122,8 @@ final class AppSectionRouteLoaderTest extends TestCase
         $routeCollection1->add('frontend_blog', new Route('blog/'));
 
         $routeCollection2 = new RouteCollection();
-        $routeCollection2->add('backend_main', new Route('/', ['host' => 'example.com'], ['host' => 'example\.com'], [], '{host}'));
-        $routeCollection2->add('backend_user', new Route('user/', ['host' => 'example.com'], ['host' => 'example\.com'], [], '{host}'));
+        $routeCollection2->add('backend_main', new Route('/', ['tld' => 'com'], ['tld' => 'net|com'], [], 'example.{tld}'));
+        $routeCollection2->add('backend_user', new Route('user/', ['tld' => 'com'], ['tld' => 'net|com'], [], 'example.{tld}'));
 
         $routeCollection3 = new RouteCollection();
         $routeCollection3->add('frontend_news', new Route('api/news/'));

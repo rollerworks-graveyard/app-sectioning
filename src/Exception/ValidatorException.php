@@ -21,7 +21,7 @@ final class ValidatorException extends \LogicException
 
         foreach ($failedSections as $name => list($host, $prefix, $conflicts)) {
             $errors[] = sprintf(
-                'AppSection(s) "%s" conflict with "%s", all have the same host "%s" and prefix "%s" configured.',
+                'AppSection(s) "%s" conflict with "%s", all have the same host pattern "%s" and prefix "%s" configured.',
                 implode('", "', $conflicts),
                 $name,
                 $host,

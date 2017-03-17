@@ -44,13 +44,38 @@ final class SectioningConfigurator
         $node = (new TreeBuilder())->root($name);
         $node
             ->addDefaultsIfNotSet()
+            ->validate()
+                ->ifTrue(function (array $v) {
+                    return false !== strpos((string) $v['host'], '{');
+                })
+                ->then(function (array $v) {
+                    $varNames = [];
+
+                    if ((string) $v['host'] !== '') {
+                        preg_match_all('#\{\w+\}#', $v['host'], $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
+                        foreach ($matches as $match) {
+                            $varNames[] = substr($match[0][0], 1, -1);
+                        }
+                    }
+
+                    foreach ($varNames as $varName) {
+                        if (!empty($v['requirements'][$varName])) {
+                            throw new \InvalidArgumentException(sprintf('Missing requirement for attribute "%s".', $varName));
+                        }
+
+                        if (!isset($v['defaults'][$varName]) || '' === trim((string) $v['defaults'][$varName])) {
+                            throw new \InvalidArgumentException(sprintf('Missing default value for attribute "%s".', $varName));
+                        }
+                    }
+                })
+            ->end()
             ->children()
                 ->scalarNode('prefix')
                     ->defaultValue('/')
                     ->cannotBeEmpty()
                     ->validate()
                         ->ifTrue(function ($v) {
-                            return preg_match('#[{}]#', $v);
+                            return false !== strpos((string) $v, '{');
                         })
                         ->then(function () {
                             throw new \InvalidArgumentException(
@@ -61,16 +86,14 @@ final class SectioningConfigurator
                 ->end()
                 ->scalarNode('host')
                     ->defaultValue(null)
-                    ->validate()
-                        ->ifTrue(function ($v) {
-                            return preg_match('#[{}]#', $v);
-                        })
-                        ->then(function () {
-                            throw new \InvalidArgumentException(
-                                'Placeholders in the "host" are not supported yet.'
-                            );
-                        })
-                    ->end()
+                ->end()
+                 ->arrayNode('requirements')
+                    ->useAttributeAsKey('name')
+                    ->prototype('scalar')->end()
+                ->end()
+                ->arrayNode('defaults')
+                    ->useAttributeAsKey('name')
+                    ->prototype('scalar')->end()
                 ->end()
             ->end()
         ;
