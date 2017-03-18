@@ -32,8 +32,24 @@ final class SectionsConfiguratorTest extends TestCase
 
         $this->assertEquals(
             [
-                'frontend' => ['host' => null, 'host_pattern' => null, 'prefix' => 'client/', 'path' => '^/client/', 'service_prefix' => 'acme.section', 'requirements' => []],
-                'backend' => ['host' => null, 'host_pattern' => null, 'prefix' => 'backend/', 'path' => '^/backend/', 'service_prefix' => 'acme.section', 'requirements' => []],
+                'frontend' => [
+                    'host' => null,
+                    'host_pattern' => null,
+                    'prefix' => 'client/',
+                    'path' => '^/client/',
+                    'service_prefix' => 'acme.section',
+                    'requirements' => [],
+                    'defaults' => [],
+                ],
+                'backend' => [
+                    'host' => null,
+                    'host_pattern' => null,
+                    'prefix' => 'backend/',
+                    'path' => '^/backend/',
+                    'service_prefix' => 'acme.section',
+                    'requirements' => [],
+                    'defaults' => [],
+                ],
             ],
             $configurator->exportConfiguration()
         );
@@ -56,7 +72,8 @@ final class SectionsConfiguratorTest extends TestCase
                     'prefix' => '/',
                     'path' => '^/',
                     'service_prefix' => 'acme.section',
-                    'requirements' => ['host' => '^example\.net$'],
+                    'requirements' => [],
+                    'defaults' => [],
                 ],
                 'backend' => [
                     'host' => 'example.com',
@@ -64,7 +81,8 @@ final class SectionsConfiguratorTest extends TestCase
                     'prefix' => '/',
                     'path' => '^/',
                     'service_prefix' => 'acme.section',
-                    'requirements' => ['host' => '^example\.com$'],
+                    'requirements' => [],
+                    'defaults' => [],
                 ],
             ],
             $configurator->exportConfiguration()
@@ -90,6 +108,7 @@ final class SectionsConfiguratorTest extends TestCase
                     'path' => '^/(?!(backend|api)/)',
                     'service_prefix' => 'acme.section',
                     'requirements' => [],
+                    'defaults' => [],
                 ],
                 'backend' => [
                     'host' => null,
@@ -98,6 +117,7 @@ final class SectionsConfiguratorTest extends TestCase
                     'path' => '^/backend/',
                     'service_prefix' => 'acme.section',
                     'requirements' => [],
+                    'defaults' => [],
                 ],
                 'api' => [
                     'host' => null,
@@ -106,6 +126,7 @@ final class SectionsConfiguratorTest extends TestCase
                     'path' => '^/api/',
                     'service_prefix' => 'acme.section',
                     'requirements' => [],
+                    'defaults' => [],
                 ],
             ],
             $configurator->exportConfiguration()
@@ -132,6 +153,7 @@ final class SectionsConfiguratorTest extends TestCase
                     'path' => '^/(?!(backend|api)/)',
                     'service_prefix' => 'acme.section',
                     'requirements' => [],
+                    'defaults' => [],
                 ],
                 'backend' => [
                     'host' => null,
@@ -140,6 +162,7 @@ final class SectionsConfiguratorTest extends TestCase
                     'path' => '^/backend/',
                     'service_prefix' => 'acme.section',
                     'requirements' => [],
+                    'defaults' => [],
                 ],
                 'backend_api' => [
                     'host' => null,
@@ -148,6 +171,7 @@ final class SectionsConfiguratorTest extends TestCase
                     'path' => '^/api/backend/',
                     'service_prefix' => 'acme.section',
                     'requirements' => [],
+                    'defaults' => [],
                 ],
                 'api' => [
                     'host' => null,
@@ -156,6 +180,7 @@ final class SectionsConfiguratorTest extends TestCase
                     'path' => '^/api/(?!(backend)/)',
                     'service_prefix' => 'acme.section',
                     'requirements' => [],
+                    'defaults' => [],
                 ],
             ],
             $configurator->exportConfiguration()
@@ -179,9 +204,10 @@ final class SectionsConfiguratorTest extends TestCase
                     'host' => 'example.com',
                     'host_pattern' => '^example\.com$',
                     'prefix' => '/',
-                    'path' => '^/(?!(backend|api)/)',
+                    'path' => '^/(?!(api|backend)/)',
                     'service_prefix' => 'acme.section',
-                    'requirements' => ['host' => '^example\.com$'],
+                    'requirements' => [],
+                    'defaults' => [],
                 ],
                 'backend' => [
                     'host' => 'example.com',
@@ -189,7 +215,8 @@ final class SectionsConfiguratorTest extends TestCase
                     'prefix' => 'backend/',
                     'path' => '^/backend/',
                     'service_prefix' => 'acme.section',
-                    'requirements' => ['host' => '^example\.com$'],
+                    'requirements' => [],
+                    'defaults' => [],
                 ],
                 'backend_api' => [
                     'host' => 'example.com',
@@ -197,7 +224,8 @@ final class SectionsConfiguratorTest extends TestCase
                     'prefix' => 'api/backend/',
                     'path' => '^/api/backend/',
                     'service_prefix' => 'acme.section',
-                    'requirements' => ['host' => '^example\.com$'],
+                    'requirements' => [],
+                    'defaults' => [],
                 ],
                 'api' => [
                     'host' => 'example.com',
@@ -205,7 +233,62 @@ final class SectionsConfiguratorTest extends TestCase
                     'prefix' => 'api/',
                     'path' => '^/api/(?!(backend)/)',
                     'service_prefix' => 'acme.section',
-                    'requirements' => ['host' => '^example\.com$'],
+                    'requirements' => [],
+                    'defaults' => [],
+                ],
+            ],
+            $configurator->exportConfiguration()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function its_configured_path_excludes_other_sub_paths_in_host_pattern()
+    {
+        $configurator = new SectionsConfigurator();
+        $configurator->set('frontend', new SectionConfiguration(['prefix' => '/', 'host' => 'example.{tld}', 'requirements' => ['tld' => 'com|net'], 'defaults' => ['tld' => 'com']]), 'acme.section');
+        $configurator->set('backend', new SectionConfiguration(['prefix' => 'backend', 'host' => 'example.com']), 'acme.section');
+        $configurator->set('backend_api', new SectionConfiguration(['prefix' => 'api/backend', 'host' => 'example.com']), 'acme.section');
+        $configurator->set('api', new SectionConfiguration(['prefix' => 'api', 'host' => 'example.com']), 'acme.section');
+
+        $this->assertEquals(
+            [
+                'frontend' => [
+                    'host' => 'example.{tld}',
+                    'host_pattern' => '^example\.(?P<tld>com|net)$',
+                    'prefix' => '/',
+                    'path' => '^/(?!(api|backend)/)',
+                    'service_prefix' => 'acme.section',
+                    'requirements' => ['tld' => 'com|net'],
+                    'defaults' => ['tld' => 'com'],
+                ],
+                'backend' => [
+                    'host' => 'example.com',
+                    'host_pattern' => '^example\.com$',
+                    'prefix' => 'backend/',
+                    'path' => '^/backend/',
+                    'service_prefix' => 'acme.section',
+                    'requirements' => [],
+                    'defaults' => [],
+                ],
+                'backend_api' => [
+                    'host' => 'example.com',
+                    'host_pattern' => '^example\.com$',
+                    'prefix' => 'api/backend/',
+                    'path' => '^/api/backend/',
+                    'service_prefix' => 'acme.section',
+                    'requirements' => [],
+                    'defaults' => [],
+                ],
+                'api' => [
+                    'host' => 'example.com',
+                    'host_pattern' => '^example\.com$',
+                    'prefix' => 'api/',
+                    'path' => '^/api/(?!(backend)/)',
+                    'service_prefix' => 'acme.section',
+                    'requirements' => [],
+                    'defaults' => [],
                 ],
             ],
             $configurator->exportConfiguration()
@@ -221,29 +304,44 @@ final class SectionsConfiguratorTest extends TestCase
 
         $configurator = new SectionsConfigurator();
         $configurator->set('frontend', new SectionConfiguration(['prefix' => '/', 'host' => 'example.com']), 'acme.section');
-        $configurator->set('backend', new SectionConfiguration(['prefix' => 'backend', 'host' => 'example.com']), 'park.section');
+        $configurator->set('backend', new SectionConfiguration([
+                'prefix' => 'backend',
+                'host' => 'example.{tld}',
+                'defaults' => ['tld' => 'com'],
+                'requirements' => ['tld' => 'com|net'],
+            ]),
+            'park.section'
+        );
 
         $configurator->registerToContainer($container);
 
         $this->assertTrue($container->hasParameter('acme.section.frontend.host'));
         $this->assertTrue($container->hasParameter('acme.section.frontend.host_pattern'));
+        $this->assertTrue($container->hasParameter('acme.section.frontend.host_requirements'));
+        $this->assertTrue($container->hasParameter('acme.section.frontend.host_defaults'));
         $this->assertTrue($container->hasParameter('acme.section.frontend.prefix'));
         $this->assertTrue($container->hasParameter('acme.section.frontend.path'));
         $this->assertTrue($container->hasDefinition('acme.section.frontend.request_matcher'));
 
         $this->assertTrue($container->hasParameter('park.section.backend.host'));
         $this->assertTrue($container->hasParameter('park.section.backend.host_pattern'));
+        $this->assertTrue($container->hasParameter('park.section.backend.host_requirements'));
+        $this->assertTrue($container->hasParameter('park.section.backend.host_defaults'));
         $this->assertTrue($container->hasParameter('park.section.backend.prefix'));
         $this->assertTrue($container->hasParameter('park.section.backend.path'));
         $this->assertTrue($container->hasDefinition('park.section.backend.request_matcher'));
 
         $this->assertEquals('example.com', $container->getParameter('acme.section.frontend.host'));
         $this->assertEquals('^example\.com$', $container->getParameter('acme.section.frontend.host_pattern'));
+        $this->assertEquals([], $container->getParameter('acme.section.frontend.host_defaults'));
+        $this->assertEquals([], $container->getParameter('acme.section.frontend.host_requirements'));
         $this->assertEquals('/', $container->getParameter('acme.section.frontend.prefix'));
         $this->assertEquals('^/(?!(backend)/)', $container->getParameter('acme.section.frontend.path'));
 
-        $this->assertEquals('example.com', $container->getParameter('park.section.backend.host'));
-        $this->assertEquals('^example\.com$', $container->getParameter('park.section.backend.host_pattern'));
+        $this->assertEquals('example.{tld}', $container->getParameter('park.section.backend.host'));
+        $this->assertEquals('^example\.(?P<tld>com|net)$', $container->getParameter('park.section.backend.host_pattern'));
+        $this->assertEquals(['tld' => 'com'], $container->getParameter('park.section.backend.host_defaults'));
+        $this->assertEquals(['tld' => 'com|net'], $container->getParameter('park.section.backend.host_requirements'));
         $this->assertEquals('backend/', $container->getParameter('park.section.backend.prefix'));
         $this->assertEquals('^/backend/', $container->getParameter('park.section.backend.path'));
 
@@ -253,7 +351,7 @@ final class SectionsConfiguratorTest extends TestCase
 
         $requestMatcherBackend = $container->getDefinition('park.section.backend.request_matcher');
         $this->assertEquals(RequestMatcher::class, $requestMatcherBackend->getClass());
-        $this->assertEquals(['^/backend/', '^example\.com$'], $requestMatcherBackend->getArguments());
+        $this->assertEquals(['^/backend/', '^example\.(?P<tld>com|net)$'], $requestMatcherBackend->getArguments());
 
         // Ensure definitions are correct.
         $container->compile();

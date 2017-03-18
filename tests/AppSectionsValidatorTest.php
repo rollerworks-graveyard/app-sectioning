@@ -171,11 +171,49 @@ final class AppSectionsValidatorTest extends TestCase
 
         $failedSections = [
             // primary => [host, prefix, conflicts]
-            'first' => ['example.com', '/', ['second']],
+            'first' => ['^example\.com$', '/', ['second']],
         ];
 
         $expectedMessage = ValidatorException::sectionsConfigConflict($failedSections)
             ->getMessage();
+        $this->expectException(ValidatorException::class);
+        $this->expectExceptionMessage($expectedMessage);
+
+        $this->validator->validate();
+    }
+
+    /**
+     * @test
+     */
+    public function it_throws_an_ValidatorException_when_section_conflicts_with_patterns()
+    {
+        $this->validator->set('first', new SectionConfiguration([
+            'prefix' => '/',
+            'host' => 'example.{tld}',
+            'requirements' => ['tld' => 'com|net'],
+            'defaults' => ['tld' => 'com'],
+        ]));
+
+        $this->validator->set('second', new SectionConfiguration([
+            'prefix' => '/', // same as 'first'
+            'host' => 'example.{ext}',
+            'requirements' => ['tld' => 'com|net'],
+            'defaults' => ['tld' => 'net'],
+        ]));
+
+        $this->validator->set('third', new SectionConfiguration([
+            'prefix' => '/app',
+            'host' => 'example.com',
+        ]));
+
+        $failedSections = [
+            // primary => [host, prefix, conflicts]
+            'first' => ['^example\.(?P<tld>com|net)$', '/', ['second']],
+        ];
+
+        $expectedMessage = ValidatorException::sectionsConfigConflict($failedSections)
+            ->getMessage();
+
         $this->expectException(ValidatorException::class);
         $this->expectExceptionMessage($expectedMessage);
 
@@ -207,11 +245,11 @@ final class AppSectionsValidatorTest extends TestCase
 
         //
         $this->validator->set('first1', new SectionConfiguration([
-            'prefix' => '/',
+            'prefix' => '/foo',
         ]));
 
         $this->validator->set('second2', new SectionConfiguration([
-            'prefix' => '/', // same as 'first1'
+            'prefix' => '/foo', // same as 'first1'
         ]));
 
         $this->validator->set('good', new SectionConfiguration([
@@ -220,8 +258,59 @@ final class AppSectionsValidatorTest extends TestCase
 
         $failedSections = [
             // primary => [host, prefix, conflicts]
-            'first' => ['example.com', '/', ['second', 'third']],
-            'first1' => ['', '/', ['second2']],
+            'first' => ['^example\.com$', '/', ['second', 'third']],
+            'first1' => ['', 'foo/', ['second2']],
+        ];
+
+        $expectedMessage = ValidatorException::sectionsConfigConflict($failedSections)
+            ->getMessage();
+
+        $this->expectException(ValidatorException::class);
+        $this->expectExceptionMessage($expectedMessage);
+
+        $this->validator->validate();
+    }
+
+    /**
+     * Same as it_throws_an_ValidatorException_when_sections_conflicts but tests
+     * without host to ensure that '/' will conflict with hostA.com/.
+     *
+     * @test
+     */
+    public function it_throws_an_ValidatorException_when_sections_conflicts_by_prefix_and_no_host()
+    {
+        $this->validator->set('first', new SectionConfiguration([
+            'prefix' => '/',
+            'host' => 'example.com',
+        ]));
+
+        $this->validator->set('second', new SectionConfiguration([
+            'prefix' => '/', // same as 'first'
+            'host' => 'example.com',
+        ]));
+
+        $this->validator->set('third', new SectionConfiguration([
+            'prefix' => '/', // same as 'first'
+            'host' => 'example.com',
+        ]));
+
+        //
+        // conflicts with 'first', no host (so '*') and equal prefix '/'
+        $this->validator->set('first1', new SectionConfiguration([
+            'prefix' => '/', // conflicts with 'first' because of no host and equal '/'
+        ]));
+
+        $this->validator->set('second2', new SectionConfiguration([
+            'prefix' => '/', // conflicts with 'first' because of no host and equal '/'
+        ]));
+
+        $this->validator->set('good', new SectionConfiguration([
+            'prefix' => '/something',
+        ]));
+
+        $failedSections = [
+            // primary => [host, prefix, conflicts]
+            'first' => ['^example\.com$', '/', ['second', 'third', 'first1', 'second2']],
         ];
 
         $expectedMessage = ValidatorException::sectionsConfigConflict($failedSections)

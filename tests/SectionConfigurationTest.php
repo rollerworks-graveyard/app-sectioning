@@ -75,15 +75,6 @@ final class SectionConfigurationTest extends TestCase
     }
 
     /**
-     * @test
-     */
-    public function it_converts_the_host_to_lowercase()
-    {
-        $configuration = (new SectionConfiguration(['prefix' => '/', 'host' => 'Example.Com']))->getConfig();
-        $this->assertEquals('example.com', $configuration['host']);
-    }
-
-    /**
      * This needs to be removed once support is added.
      *
      * @test
@@ -91,21 +82,8 @@ final class SectionConfigurationTest extends TestCase
     public function it_throws_when_placeholders_are_found_prefix()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Placeholders in the "host" and/or "prefix" are not supported yet.');
+        $this->expectExceptionMessage('Placeholders in the "prefix" are not supported.');
 
         new SectionConfiguration(['prefix' => '/{_local}/']);
-    }
-
-    /**
-     * This needs to be removed once support is added.
-     *
-     * @test
-     */
-    public function it_throws_when_placeholders_are_found_host()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Placeholders in the "host" and/or "prefix" are not supported yet.');
-
-        new SectionConfiguration(['prefix' => '/', 'host' => '{locale}.example.com']);
     }
 }

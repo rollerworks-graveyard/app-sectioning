@@ -11,7 +11,8 @@
     ],
     "require": {
         "php": "^7.0",
-        "symfony/framework-bundle": "^2.8|^3.0"
+        "symfony/framework-bundle": "^2.8|^3.0",
+        "icomefromthenet/reverse-regex": "^0.0.6.3"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^3.2.6",

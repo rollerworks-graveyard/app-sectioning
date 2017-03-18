@@ -77,16 +77,14 @@ final class AppSectionRouteLoader extends Loader
 
         /** @var RouteCollection $collection */
         $collection = $this->loader->load($parts['resource'], '' === $parts['type'] ? null : $parts['type']);
+        $section = $this->sections[$parts['section']];
 
         // Configure the section information for all imported routes.
         // N.B. this needs to be called 'after' the importing!
-        $collection->addPrefix($this->sections[$parts['section']]['prefix']);
+        $collection->addPrefix($section['prefix']);
 
         if (isset($this->sections[$parts['section']]['host'])) {
-            $section = $this->sections[$parts['section']];
-
-            $collection->setHost('{host}', ['host' => $section['host']]);
-            $collection->addRequirements($section['requirements']);
+            $collection->setHost($section['host'], $section['host_defaults'], $section['host_requirements']);
         }
 
         return $collection;

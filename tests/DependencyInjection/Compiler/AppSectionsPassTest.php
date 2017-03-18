@@ -73,21 +73,19 @@ final class AppSectionsPassTest extends AbstractCompilerPassTestCase
                 'prefix' => '/',
                 'host' => 'example.com',
                 'host_pattern' => '^example\.com$',
-                'requirements' => [
-                    'host' => '^example\.com$',
-                ],
+                'requirements' => [],
                 'service_prefix' => 'acme.section',
                 'path' => '^/(?!(backend)/)',
+                'defaults' => [],
             ],
             'backend' => [
                 'prefix' => 'backend/',
                 'host' => 'example.com',
                 'host_pattern' => '^example\.com$',
-                'requirements' => [
-                    'host' => '^example\.com$',
-                ],
+                'requirements' => [],
                 'service_prefix' => 'acme.section',
                 'path' => '^/backend/',
+                'defaults' => [],
             ],
         ]);
     }
@@ -149,8 +147,8 @@ final class AppSectionsPassTest extends AbstractCompilerPassTestCase
 
         $this->expectException(ValidatorException::class);
         $this->expectExceptionMessage(
-            'AppSection(s) "backend" conflict with "frontend", all have the same host "example.com" '.
-            'and prefix "/" configured.'
+            'AppSection(s) "backend" conflict with "frontend", all have the same host pattern '.
+            '"^example\.com$" and prefix "/" configured.'
         );
 
         $this->compile();
