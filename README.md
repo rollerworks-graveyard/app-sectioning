@@ -18,9 +18,6 @@ Only when both share the same host group and only there is a conflict.
 
 You then use these generated parameters for routing and the security firewalls.
 
-**Coming-up:** At this moment you can only use static values, but in the future
-it will be possible to use placeholders (with limited conflict detection).
-
 **Caution:** Registering a section name that is already
 used will overwrite the other one (without warning).
 
