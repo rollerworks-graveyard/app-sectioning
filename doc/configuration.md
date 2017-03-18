@@ -21,7 +21,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Rollerworks\Bundle\AppSectioning\DependencyInjection\SectioningConfigurator;
 
-class DatabaseConfiguration implements ConfigurationInterface
+class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder()
     {
@@ -87,20 +87,44 @@ acme_frontend:
         host: example.com
 ```
 
+### Dynamic host requirements
+
+Your host can also use regex requirements as you would in the Routing
+system. With exception, you must define the requirements and defaults
+for all attributes.
+
+```yaml
+acme_frontend:
+    section:
+        prefix: /
+        host: example.{tld}
+        defaults: 
+            tld: com
+        requrements: 
+            tld: 'com|net'
+```
+
 ### Container parameters
 
 In your bundle services or application [security firewall], [routing] etc.
 you use the service-container parameters like:
 
 ```
-'acme.section.frontend.host'         :'example.com'
+'acme.section.frontend.host'         : 'example.com'
 'acme.section.frontend.host_pattern' : '^example\.com$'
 'acme.section.frontend.prefix'       : '/'
 'acme.section.frontend.path'         : '^/(?!(backend|api)/)'
 ```
 
-**Note:** `host_pattern` and `path` are regular expressions, host will match
-completely but path will only check the beginning of the uri.
+And in addition you have the `acme.section.frontend.host_requirements` and
+`acme.section.frontend.host_default` which are primarily used for routing.
+
+**Note:** 
+
+> `host_pattern` and `path` are regular expressions, host will match
+> completely but path will only check the beginning of the uri.
+>
+> The `host` may contain attributes such as `example.{tld}`
 
 The `acme.section.frontend.request_matcher` service provides a
 configured `RequestMatcher` for the firewall and other services.
@@ -116,8 +140,9 @@ And `{section-name}` the name of the section (like 'frontend').
 
 ## Limitations
 
-Placeholders for eg. `{_locale}` or more tld's/IP nets in the host, are not supported yet.
-*A negative lookahead regex pattern must only be used when there are sections that match,
-else `^/(?!(user)/)` is going to fail with `/user/` in the backend section (with it a different host).*
+* Placeholders/attributes in the prefix are not yet supported.
+  See also [Add placeholder support for prefix and host in the issue tracker](https://github.com/rollerworks/app-sectioning-bundle/issues/1)
 
-See also [Add placeholder support for prefix and host in the issue tracker](https://github.com/rollerworks/app-sectioning-bundle/issues/1)
+* Unicode support is not fully supported yet.
+
+* The routing doesn't allow setting conditions or schema's.
