@@ -11,9 +11,9 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Rollerworks\Bundle\AppSectioning\Tests\Functional;
+namespace Rollerworks\Bundle\AppSectioningBundle\Tests\Functional;
 
-use Rollerworks\Bundle\AppSectioning\Tests\Functional\Application\AppKernel;
+use Rollerworks\Bundle\AppSectioningBundle\Tests\Functional\Application\AppKernel;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 

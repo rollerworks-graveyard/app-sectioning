@@ -11,11 +11,11 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Rollerworks\Bundle\AppSectioning\Tests;
+namespace Rollerworks\Bundle\AppSectioningBundle\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Rollerworks\Bundle\AppSectioning\SectionConfiguration;
-use Rollerworks\Bundle\AppSectioning\SectionsConfigurator;
+use Rollerworks\Bundle\AppSectioningBundle\SectionConfiguration;
+use Rollerworks\Bundle\AppSectioningBundle\SectionsConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpFoundation\RequestMatcher;
 

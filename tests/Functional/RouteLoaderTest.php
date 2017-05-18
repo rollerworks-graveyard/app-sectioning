@@ -11,7 +11,7 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Rollerworks\Bundle\AppSectioning\Tests\Functional;
+namespace Rollerworks\Bundle\AppSectioningBundle\Tests\Functional;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 

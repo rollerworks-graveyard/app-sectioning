@@ -11,9 +11,9 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Rollerworks\Bundle\AppSectioning\Tests\Functional\Application\AppBundle;
+namespace Rollerworks\Bundle\AppSectioningBundle\Tests\Functional\Application\AppBundle;
 
-use Rollerworks\Bundle\AppSectioning\Tests\Functional\Application\AppBundle\DependencyInjection\AppExtension;
+use Rollerworks\Bundle\AppSectioningBundle\Tests\Functional\Application\AppBundle\DependencyInjection\AppExtension;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 final class AppBundle extends Bundle

@@ -11,10 +11,10 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Rollerworks\Bundle\AppSectioning\Tests;
+namespace Rollerworks\Bundle\AppSectioningBundle\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Rollerworks\Bundle\AppSectioning\SectionConfiguration;
+use Rollerworks\Bundle\AppSectioningBundle\SectionConfiguration;
 
 final class SectionConfigurationTest extends TestCase
 {

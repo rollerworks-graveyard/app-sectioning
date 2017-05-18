@@ -11,11 +11,11 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Rollerworks\Bundle\AppSectioning\DependencyInjection\Compiler;
+namespace Rollerworks\Bundle\AppSectioningBundle\DependencyInjection\Compiler;
 
-use Rollerworks\Bundle\AppSectioning\AppSectionsValidator;
-use Rollerworks\Bundle\AppSectioning\DependencyInjection\SectioningFactory;
-use Rollerworks\Bundle\AppSectioning\SectionsConfigurator;
+use Rollerworks\Bundle\AppSectioningBundle\AppSectionsValidator;
+use Rollerworks\Bundle\AppSectioningBundle\DependencyInjection\SectioningFactory;
+use Rollerworks\Bundle\AppSectioningBundle\SectionsConfigurator;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 

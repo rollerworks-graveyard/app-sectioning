@@ -11,7 +11,7 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Rollerworks\Bundle\AppSectioning\Tests\Functional\Application;
+namespace Rollerworks\Bundle\AppSectioningBundle\Tests\Functional\Application;
 
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -45,7 +45,7 @@ class AppKernel extends Kernel
     {
         $bundles = [
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
-            new \Rollerworks\Bundle\AppSectioning\RollerworksAppSectioningBundle(),
+            new \Rollerworks\Bundle\AppSectioningBundle\RollerworksAppSectioningBundle(),
 
             new AppBundle\AppBundle(),
         ];

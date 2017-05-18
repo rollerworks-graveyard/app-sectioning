@@ -11,9 +11,9 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Rollerworks\Bundle\AppSectioning\DependencyInjection;
+namespace Rollerworks\Bundle\AppSectioningBundle\DependencyInjection;
 
-use Rollerworks\Bundle\AppSectioning\SectionConfiguration;
+use Rollerworks\Bundle\AppSectioningBundle\SectionConfiguration;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 

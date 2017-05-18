@@ -11,28 +11,28 @@
     ],
     "require": {
         "php": "^7.0",
-        "symfony/framework-bundle": "^2.8.9|^3.2.8",
+        "symfony/framework-bundle": "^3.2.8",
         "icomefromthenet/reverse-regex": "^0.0.6.3"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "^3.2.6",
-        "symfony/browser-kit": "^2.8.9 || ^3.2.8",
-        "matthiasnoback/symfony-dependency-injection-test": "^2.0.0"
+        "symfony/phpunit-bridge": "^3.2.8",
+        "symfony/browser-kit": "^3.2.8",
+        "matthiasnoback/symfony-dependency-injection-test": "^2.1.0"
     },
     "autoload": {
         "psr-4": {
-            "Rollerworks\\Bundle\\AppSectioning\\": "src/"
+            "Rollerworks\\Bundle\\AppSectioningBundle\\": "src/"
         },
         "exclude-from-classmap": ["test/"]
     },
     "autoload-dev": {
         "psr-4": {
-            "Rollerworks\\Bundle\\AppSectioning\\Tests\\": "tests/"
+            "Rollerworks\\Bundle\\AppSectioningBundle\\Tests\\": "tests/"
         }
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "0.3-dev"
+            "dev-master": "0.4-dev"
         }
     }
 }

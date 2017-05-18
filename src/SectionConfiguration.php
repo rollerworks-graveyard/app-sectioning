@@ -11,7 +11,7 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Rollerworks\Bundle\AppSectioning;
+namespace Rollerworks\Bundle\AppSectioningBundle;
 
 use Symfony\Component\Routing\Route;
 
