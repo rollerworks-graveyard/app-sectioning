@@ -1,0 +1,15 @@
+imports:
+    - { resource: framework.yml }
+
+test_app:
+    sections:
+        backend:
+            prefix: backend/
+            host: null
+            requirements: ~
+            defaults: ~
+        frontend:
+            prefix: /
+            host: null
+            requirements: ~
+            defaults: ~

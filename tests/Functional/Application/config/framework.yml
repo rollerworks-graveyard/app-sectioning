@@ -1,0 +1,21 @@
+framework:
+    translator:          false
+    secret:              test
+    router:
+        resource: '%kernel.root_dir%/config/routing.yml'
+        strict_requirements: '%kernel.debug%'
+    form:                false
+    csrf_protection:     false
+    validation:          false
+    templating:          false
+    default_locale:      en
+    session:
+        storage_id: session.storage.mock_file
+    test:                ~
+    assets: false
+    profiler:
+        collect: false
+
+services:
+    logger:
+        class: 'Psr\Log\NullLogger'

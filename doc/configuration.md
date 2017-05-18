@@ -66,9 +66,9 @@ class AcmeFrontendExtension extends ConfigurableExtension
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
 
-        $factory = new SectioningFactory($this->container, 'acme.section');
-        $factory->set('frontend', $config['section']));
-        //$factory->set('backend', $config['second_section']));
+        $factory = new SectioningFactory($container, 'acme.section');
+        $factory->set('frontend', $config['section']);
+        //$factory->set('backend', $config['second_section']);
 
         // ...
     }

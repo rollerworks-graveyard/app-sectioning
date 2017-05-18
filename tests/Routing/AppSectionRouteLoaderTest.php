@@ -16,6 +16,7 @@ namespace Rollerworks\Bundle\AppSectioning\Tests\Routing;
 use PHPUnit\Framework\TestCase;
 use Rollerworks\Bundle\AppSectioning\Routing\AppSectionRouteLoader;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\Config\Loader\LoaderResolverInterface;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
@@ -51,8 +52,6 @@ final class AppSectionRouteLoaderTest extends TestCase
     public function createLoader()
     {
         $loader = $this->prophesize(LoaderInterface::class);
-
-        // type=null
         $loader->load('something.yml', null)->will(
             function () {
                 $routeCollection = new RouteCollection();
@@ -63,8 +62,8 @@ final class AppSectionRouteLoaderTest extends TestCase
             }
         );
 
-        // type=xml
-        $loader->load('something.xml', 'xml')->will(
+        $xmlLoader = $this->prophesize(LoaderInterface::class);
+        $xmlLoader->load('something.xml', 'xml')->will(
             function () {
                 $routeCollection = new RouteCollection();
                 $routeCollection->add('backend_main', new Route('/'));
@@ -74,7 +73,11 @@ final class AppSectionRouteLoaderTest extends TestCase
             }
         );
 
-        $this->loader = new AppSectionRouteLoader($loader->reveal(), self::APP_SECTIONS);
+        $resolver = $this->prophesize(LoaderResolverInterface::class);
+        $resolver->resolve('something.yml', null)->willReturn($loader);
+        $resolver->resolve('something.xml', 'xml')->willReturn($xmlLoader);
+
+        $this->loader = new AppSectionRouteLoader($resolver->reveal(), self::APP_SECTIONS);
     }
 
     /**
