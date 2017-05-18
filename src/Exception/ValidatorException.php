@@ -11,7 +11,7 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Rollerworks\Bundle\AppSectioning\Exception;
+namespace Rollerworks\Bundle\AppSectioningBundle\Exception;
 
 final class ValidatorException extends \LogicException
 {

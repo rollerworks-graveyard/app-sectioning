@@ -5,7 +5,7 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="rollerworks.app_section.route_loader" class="Rollerworks\Bundle\AppSectioning\Routing\AppSectionRouteLoader" public="false">
+        <service id="rollerworks.app_section.route_loader" class="Rollerworks\Bundle\AppSectioningBundle\Routing\AppSectionRouteLoader" public="false">
             <tag name="routing.loader" />
             <argument type="service" id="routing.resolver" />
             <argument type="collection" /> <!-- Gets populated by the AppSectionsPass -->

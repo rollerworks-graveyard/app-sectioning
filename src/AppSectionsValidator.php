@@ -11,9 +11,9 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Rollerworks\Bundle\AppSectioning;
+namespace Rollerworks\Bundle\AppSectioningBundle;
 
-use Rollerworks\Bundle\AppSectioning\Exception\ValidatorException;
+use Rollerworks\Bundle\AppSectioningBundle\Exception\ValidatorException;
 
 /**
  * The AppSectionsValidator validates whether the provided Application sections

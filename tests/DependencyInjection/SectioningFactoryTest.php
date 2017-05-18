@@ -11,11 +11,11 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Rollerworks\Bundle\AppSectioning\Tests\DependencyInjection;
+namespace Rollerworks\Bundle\AppSectioningBundle\Tests\DependencyInjection;
 
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractContainerBuilderTestCase;
-use Rollerworks\Bundle\AppSectioning\DependencyInjection\SectioningFactory;
-use Rollerworks\Bundle\AppSectioning\SectionConfiguration;
+use Rollerworks\Bundle\AppSectioningBundle\DependencyInjection\SectioningFactory;
+use Rollerworks\Bundle\AppSectioningBundle\SectionConfiguration;
 
 final class SectioningFactoryTest extends AbstractContainerBuilderTestCase
 {
@@ -76,7 +76,7 @@ final class SectioningFactoryTest extends AbstractContainerBuilderTestCase
         $this->assertSame($factory, $factory->set('frontend', ['prefix' => '/', 'host' => 'example.com']));
         $this->assertSame($factory, $factory->set('backend', ['prefix' => 'backend', 'host' => 'example.com']));
 
-        $factory = new SectioningFactory($this->container, 'rollerworks.section', 'second');
+        $factory = new SectioningFactory($this->container, 'rollerworks.section');
         $this->assertSame($factory, $factory->set('frontend', ['prefix' => '/', 'host' => 'example.com']));
         $this->assertSame($factory, $factory->set('backend', ['prefix' => 'backend', 'host' => 'example.com']));
 

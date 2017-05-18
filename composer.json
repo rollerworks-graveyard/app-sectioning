@@ -21,18 +21,18 @@
     },
     "autoload": {
         "psr-4": {
-            "Rollerworks\\Bundle\\AppSectioning\\": "src/"
+            "Rollerworks\\Bundle\\AppSectioningBundle\\": "src/"
         },
         "exclude-from-classmap": ["test/"]
     },
     "autoload-dev": {
         "psr-4": {
-            "Rollerworks\\Bundle\\AppSectioning\\Tests\\": "tests/"
+            "Rollerworks\\Bundle\\AppSectioningBundle\\Tests\\": "tests/"
         }
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "0.3-dev"
+            "dev-master": "0.4-dev"
         }
     }
 }

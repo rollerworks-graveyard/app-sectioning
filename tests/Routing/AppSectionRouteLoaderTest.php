@@ -11,10 +11,10 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Rollerworks\Bundle\AppSectioning\Tests\Routing;
+namespace Rollerworks\Bundle\AppSectioningBundle\Tests\Routing;
 
 use PHPUnit\Framework\TestCase;
-use Rollerworks\Bundle\AppSectioning\Routing\AppSectionRouteLoader;
+use Rollerworks\Bundle\AppSectioningBundle\Routing\AppSectionRouteLoader;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Loader\LoaderResolverInterface;
 use Symfony\Component\Routing\Route;
