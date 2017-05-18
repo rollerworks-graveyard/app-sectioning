@@ -1,0 +1,7 @@
+frontend_products_show:
+    path: /products/show
+    defaults: { _controller: "AppBundle:Main:foo" }
+
+frontend_products_search:
+    path: /products/search
+    defaults: { _controller: "AppBundle:Main:foo" }

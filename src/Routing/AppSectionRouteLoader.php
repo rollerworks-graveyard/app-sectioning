@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Rollerworks\Bundle\AppSectioning\Routing;
 
 use Symfony\Component\Config\Loader\Loader;
-use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\Config\Loader\LoaderResolverInterface;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
@@ -41,12 +41,12 @@ final class AppSectionRouteLoader extends Loader
     /**
      * Constructor.
      *
-     * @param LoaderInterface $loader   Route loader
-     * @param array           $sections Sections as associative array, each entry
-     *                                  must contain at least a 'prefix', and optionally
-     *                                  host_pattern, host, host_requirements
+     * @param LoaderResolverInterface $loader   Route loader resolver
+     * @param array                   $sections Sections as associative array, each entry
+     *                                          must contain at least a 'prefix', and optionally
+     *                                          host_pattern, host, host_requirements
      */
-    public function __construct(LoaderInterface $loader, array $sections)
+    public function __construct(LoaderResolverInterface $loader, array $sections)
     {
         $this->sections = $sections;
         $this->loader = $loader;
@@ -76,7 +76,8 @@ final class AppSectionRouteLoader extends Loader
         }
 
         /** @var RouteCollection $collection */
-        $collection = $this->loader->load($parts['resource'], '' === $parts['type'] ? null : $parts['type']);
+        $loader = $this->loader->resolve($parts['resource'], '' === (string) $parts['type'] ? null : $parts['type']);
+        $collection = $loader->load($parts['resource'], '' === (string) $parts['type'] ? null : $parts['type']);
         $section = $this->sections[$parts['section']];
 
         // Configure the section information for all imported routes.

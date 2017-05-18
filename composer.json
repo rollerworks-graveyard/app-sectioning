@@ -11,11 +11,12 @@
     ],
     "require": {
         "php": "^7.0",
-        "symfony/framework-bundle": "^2.8|^3.0",
+        "symfony/framework-bundle": "^2.8.9|^3.2.8",
         "icomefromthenet/reverse-regex": "^0.0.6.3"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^3.2.6",
+        "symfony/browser-kit": "^2.8.9 || ^3.2.8",
         "matthiasnoback/symfony-dependency-injection-test": "^2.0.0"
     },
     "autoload": {

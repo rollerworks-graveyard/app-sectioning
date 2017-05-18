@@ -1,0 +1,7 @@
+_backend:
+    resource: 'backend#@AppBundle/Resources/config/routing/backend.yml'
+    type: app_section
+
+_frontend:
+    resource: 'frontend#@AppBundle/Resources/config/routing/frontend.yml'
+    type: app_section
