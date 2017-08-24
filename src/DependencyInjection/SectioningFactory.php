@@ -27,7 +27,7 @@ use Symfony\Component\DependencyInjection\Definition;
  */
 final class SectioningFactory
 {
-    const TAG_NAME = 'rollerworks.app_section';
+    public const TAG_NAME = 'rollerworks.app_section';
 
     /**
      * @var ContainerBuilder
