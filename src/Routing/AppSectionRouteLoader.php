@@ -33,7 +33,7 @@ final class AppSectionRouteLoader extends Loader
      *
      * Matches:`frontend#something.yml` and `frontend:types#something.yml`.
      */
-    const RESOURCE_REGEX = '/^(?P<section>[a-z-9_-]+)(?::(?P<type>[a-z-9_-]+))?#(?P<resource>[^$]+)$/i';
+    private const RESOURCE_REGEX = '/^(?P<section>[a-z-9_-]+)(?::(?P<type>[a-z-9_-]+))?#(?P<resource>[^$]+)$/i';
 
     private $sections = [];
     private $loader;

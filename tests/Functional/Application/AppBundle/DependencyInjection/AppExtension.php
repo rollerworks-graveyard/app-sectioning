@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\Extension\Extension;
 
 final class AppExtension extends Extension
 {
-    const EXTENSION_ALIAS = 'test_app';
+    public const EXTENSION_ALIAS = 'test_app';
 
     public function load(array $configs, ContainerBuilder $container): void
     {

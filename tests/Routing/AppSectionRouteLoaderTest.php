@@ -27,7 +27,7 @@ final class AppSectionRouteLoaderTest extends TestCase
      */
     private $loader;
 
-    const APP_SECTIONS = [
+    private const APP_SECTIONS = [
         'api' => [
             'prefix' => 'api/',
             'host_requirements' => [],

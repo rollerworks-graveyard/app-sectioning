@@ -243,7 +243,6 @@ final class AppSectionsValidatorTest extends TestCase
             'host' => 'example.com',
         ]));
 
-        //
         $this->validator->set('first1', new SectionConfiguration([
             'prefix' => '/foo',
         ]));
