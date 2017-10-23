@@ -12,6 +12,8 @@ matrix:
           env: coverage=1 lint=1
         - php: '7.1'
           env: deps='low'
+        - php: '7.1'
+          env: deps='dev'
 
 cache:
     directories:
@@ -30,6 +32,13 @@ before_install:
 install:
     - if [[ $coverage = 1 ]]; then composer require --dev --no-update 'phpunit/php-code-coverage:^5.2'; fi
     - if [[ ! $deps ]]; then composer update --prefer-dist --no-progress --no-suggest --ansi; fi
+
+    - |
+        # Temp fix `matthiasnoback/symfony-dependency-injection-test` doesn't support Symfony 4 yet
+        if [[ $deps = 'dev' ]]; then
+            composer require --no-update "symfony/dependency-injection:v4.0.0-BETA1 as 3.4"
+        fi;
+
     - if [[ $deps = 'dev' ]]; then composer config minimum-stability dev && composer update --prefer-dist --no-progress --no-suggest --ansi ; fi
     - if [[ $deps = 'low' ]]; then composer update --prefer-dist --no-progress --no-suggest --prefer-stable --prefer-lowest --ansi; fi
 
