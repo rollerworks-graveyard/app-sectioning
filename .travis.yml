@@ -36,7 +36,7 @@ install:
     - |
         # Temp fix `matthiasnoback/symfony-dependency-injection-test` doesn't support Symfony 4 yet
         if [[ $deps = 'dev' ]]; then
-            composer require --no-update "symfony/dependency-injection:v4.0.0-BETA1 as 3.4"
+            composer require --no-update "symfony/dependency-injection:v4.0.0 as 3.4"
         fi;
 
     - if [[ $deps = 'dev' ]]; then composer config minimum-stability dev && composer update --prefer-dist --no-progress --no-suggest --ansi ; fi
