@@ -11,16 +11,16 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Rollerworks\Bundle\AppSectioningBundle;
+namespace Rollerworks\Component\AppSectioning;
 
+use Rollerworks\Component\AppSectioning\Exception\ValidatorException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpFoundation\RequestMatcher;
 
 /**
- * SectionsConfigurator registers the resolved sections configuration
- * in the service-container.
+ * SectionsConfigurator resolves the app-sections configuration
+ * and ensures there are no conflicts.
  *
- * The main purpose of this class is to auto configure the path of a section without conflict.
  * Say there are two sections:
  *
  * * Frontend - host: example.com prefix: /
@@ -30,16 +30,50 @@ use Symfony\Component\HttpFoundation\RequestMatcher;
  * To prevent this the path (regex) is configured to never match 'backend/'.
  * Only when both share the same host and only there is an actual conflict.
  *
+ * Note: For routing the prefix doesn't use a negative look-ahead,
+ * as router performs full matches.
+ *
  * @author Sebastiaan Stok <s.stok@rollerscapes.net>
  */
 final class SectionsConfigurator
 {
     private $sections = [];
+    private $processed;
 
-    public function set(string $name, SectionConfiguration $config, string $servicePrefix)
+    public function set(string $name, SectionConfiguration $config)
     {
         $this->sections[$name] = $config->getConfig();
-        $this->sections[$name]['service_prefix'] = $servicePrefix;
+        $this->sections[$name]['config'] = $config;
+        $this->processed = null;
+    }
+
+    /**
+     * Process the registered sections configuration.
+     *
+     * @throws ValidatorException When one ore more sections have a conflicting configuration
+     */
+    public function process(): void
+    {
+        $conflicts = [];
+        $this->processed = $this->groupSectionsPerHost();
+
+        foreach ($this->processed as $hostIndex => $configs) {
+            $prefixes = [];
+
+            foreach ($configs as $section => $config) {
+                $prefix = $config['prefix'];
+
+                if (isset($prefixes[$prefix])) {
+                    $conflicts[$prefixes[$prefix]][] = $section;
+                } else {
+                    $prefixes[$prefix] = $section;
+                }
+            }
+        }
+
+        if (\count($conflicts)) {
+            throw ValidatorException::sectionsConfigConflict($this->formatPrefixConflicts($conflicts));
+        }
     }
 
     /**
@@ -62,15 +96,15 @@ final class SectionsConfigurator
      *
      * @param ContainerBuilder $container
      */
-    public function registerToContainer(ContainerBuilder $container)
+    public function registerToContainer(ContainerBuilder $container, string $servicePrefix)
     {
-        foreach ($this->resolveSections($this->sections) as $name => $config) {
-            $servicePrefix = rtrim($config['service_prefix'], '.').'.';
+        $servicePrefix = rtrim($servicePrefix, '.').'.';
 
+        foreach ($this->resolveSections() as $name => $config) {
             $container->setParameter($servicePrefix.$name.'.host', (string) $config['host']);
             $container->setParameter($servicePrefix.$name.'.host_pattern', (string) ($config['host_pattern'] ?: '.*'));
-            $container->setParameter($servicePrefix.$name.'.host_requirements', $config['requirements']);
-            $container->setParameter($servicePrefix.$name.'.host_defaults', $config['defaults']);
+            $container->setParameter($servicePrefix.$name.'.requirements', $config['requirements']);
+            $container->setParameter($servicePrefix.$name.'.defaults', $config['defaults']);
             $container->setParameter($servicePrefix.$name.'.prefix', $config['prefix']);
             $container->setParameter($servicePrefix.$name.'.path', $config['path']);
             $container->register($servicePrefix.$name.'.request_matcher', RequestMatcher::class)->setArguments(
@@ -85,49 +119,53 @@ final class SectionsConfigurator
     /**
      * Returns resolved sections.
      *
-     * The returned structure is like follow (value is an associative array):
+     * The returned structure is as follow (value is an associative array):
      * [section-name] => [host, host_pattern, prefix, path]
      *
      * @return array[]
      */
     public function exportConfiguration(): array
     {
-        return $this->resolveSections($this->sections);
+        return $this->resolveSections();
     }
 
-    private function resolveSections(array $sections): array
+    private function resolveSections(): array
     {
-        $hostsSections = $this->groupSectionsPerHost($sections);
+        if (null === $this->processed) {
+            $this->process();
+        }
 
-        foreach ($hostsSections as $sectionsInHost) {
+        $sections = [];
+
+        foreach ($this->processed as $sectionsInHost) {
             foreach ($sectionsInHost as $name => $hostSections) {
                 $sections[$name] = $this->generateSectionPath($name, $sectionsInHost);
+                unset($sections[$name]['config']);
             }
         }
 
         return $sections;
     }
 
-    private function groupSectionsPerHost(array $sections)
+    private function groupSectionsPerHost()
     {
-        $sections2 = $sections;
         $hostsSections = [];
+        $sections2 = $this->sections;
+        $processed = [];
         $hostIndex = 0;
 
-        foreach ($sections as $name => $config) {
-            $hostsSections[$hostIndex][$name] = $config;
-
-            if (null === $config['host_pattern']) {
+        foreach ($this->sections as $name => $config) {
+            if (isset($processed[$name])) {
                 continue;
             }
 
-            foreach ($sections2 as $name2 => $config2) {
-                if ($name2 === $name || null === $config2['host_pattern']) {
-                    continue;
-                }
+            $processed[$name] = $hostIndex;
+            $hostsSections[$hostIndex][$name] = $config;
 
-                if (RegexEqualityChecker::equals($config['host_pattern'], '#'.$config2['host_pattern'].'#si')) {
-                    $hostsSections[$hostIndex][$name2] = $config2;
+            foreach ($sections2 as $name2 => $config2) {
+                if ($config['config']->hostEquals($config2['config'])) {
+                    $hostsSections[$processed[$name]][$name2] = $config2;
+                    $processed[$name2] = $processed[$name];
                 }
             }
 
@@ -135,6 +173,21 @@ final class SectionsConfigurator
         }
 
         return $hostsSections;
+    }
+
+    private function formatPrefixConflicts(array $conflicts): array
+    {
+        $failedSections = [];
+
+        foreach ($conflicts as $primary => $sections) {
+            $failedSections[$primary] = [
+                $this->sections[$primary]['host_pattern'],
+                $this->sections[$primary]['prefix'],
+                $sections,
+            ];
+        }
+
+        return $failedSections;
     }
 
     private function generateSectionPath(string $name, array $allSections): array

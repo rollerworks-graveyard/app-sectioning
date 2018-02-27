@@ -11,11 +11,12 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Rollerworks\Bundle\AppSectioningBundle\Tests\Functional;
+namespace Rollerworks\Component\AppSectioning\Tests\Functional;
 
-use Rollerworks\Bundle\AppSectioningBundle\Tests\Functional\Application\AppKernel;
+use Rollerworks\Component\AppSectioning\Tests\Functional\Application\AppKernel;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerAggregate;
 
 abstract class FunctionalTestCase extends WebTestCase
 {
@@ -33,6 +34,7 @@ abstract class FunctionalTestCase extends WebTestCase
     {
         $client = static::createClient(array_merge(['config' => 'default.yml'], $options), $server);
 
+        /** @var CacheWarmerAggregate $warmer */
         $warmer = $client->getContainer()->get('cache_warmer');
         $warmer->warmUp($client->getContainer()->getParameter('kernel.cache_dir'));
         $warmer->enableOptionalWarmers();

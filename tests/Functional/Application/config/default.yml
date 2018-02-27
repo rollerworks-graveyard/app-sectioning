@@ -1,15 +1,13 @@
 imports:
     - { resource: framework.yml }
 
-test_app:
-    sections:
+parameters:
+    app_sections:
         backend:
             prefix: backend/
-            host: null
-            requirements: ~
-            defaults: ~
+            host: example.{tld}
+            requirements: { id: '\d+', tld: com }
+            defaults: { tld: com }
         frontend:
             prefix: /
             host: null
-            requirements: ~
-            defaults: ~

@@ -11,7 +11,7 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Rollerworks\Bundle\AppSectioningBundle\Tests\Functional;
+namespace Rollerworks\Component\AppSectioning\Tests\Functional;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -24,7 +24,7 @@ final class RouteLoaderTest extends FunctionalTestCase
     {
         $client = self::newClient();
 
-        $client->request('GET', $uri);
+        $client->request('GET', 'http://example.com'.$uri);
         $this->assertEquals('Route: '.$expectedRoute, $client->getResponse()->getContent());
     }
 

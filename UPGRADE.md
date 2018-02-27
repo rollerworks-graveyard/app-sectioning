@@ -1,6 +1,36 @@
 UPGRADE
 =======
 
+## Upgrade FROM 0.4 to 0.5
+
+* The namespace has changed from `Rollerworks\Bundle\AppSectioningBundle`
+  to `Rollerworks\Component\AppSectioning` as this configuration helper
+  no longer requires a bundle-type integration.
+
+* Host requirements no longer allow regexp, only `|` for multiple accepted values.
+  
+* The Validator was combined with the Configurator. The Validator class
+  has been removed.
+
+* Prefix now explicitly disallows attributes (this wasn't supported but 
+  now it’s forbidden).
+  
+* Section can now only be registered at a single point.
+  Late resolving had to many issues and has been removed.
+  
+* The `SectioningFactory` now requires `register()` is called after all
+  sections are set.
+  
+  ```php
+  (new SectioningFactory($container, 'acme.sections'))
+      ->set('section-name', ['configuration'])
+      ->set('section-name2', ['configuration'])
+      ->register();
+  ```
+  
+  **Tip**: The SectioningFactory now allows to register from an array 
+  or JSON string (eg. Environment value).
+
 ## Upgrade FROM 0.3 to 0.4
 
 * The namespace has changed from `Rollerworks\Bundle\AppSectioning`
