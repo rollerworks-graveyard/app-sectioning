@@ -11,7 +11,7 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Rollerworks\Bundle\AppSectioningBundle\Exception;
+namespace Rollerworks\Component\AppSectioning\Exception;
 
 final class ValidatorException extends \LogicException
 {
@@ -21,7 +21,7 @@ final class ValidatorException extends \LogicException
 
         foreach ($failedSections as $name => list($host, $prefix, $conflicts)) {
             $errors[] = sprintf(
-                'AppSection(s) "%s" conflict with "%s", all have the same host pattern "%s" and prefix "%s" configured.',
+                'AppSection(s) "%s" conflict with "%s", all match host pattern "%s" and prefix "%s".',
                 implode('", "', $conflicts),
                 $name,
                 $host,

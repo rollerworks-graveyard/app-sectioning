@@ -2,7 +2,6 @@ framework:
     translator:          false
     secret:              test
     router:
-        resource: '%kernel.root_dir%/config/routing.yml'
         strict_requirements: '%kernel.debug%'
     form:                false
     csrf_protection:     false

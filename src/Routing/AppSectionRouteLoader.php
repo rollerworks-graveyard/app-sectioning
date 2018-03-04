@@ -11,7 +11,7 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Rollerworks\Bundle\AppSectioningBundle\Routing;
+namespace Rollerworks\Component\AppSectioning\Routing;
 
 use Symfony\Component\Config\Loader\Loader;
 use Symfony\Component\Config\Loader\LoaderResolverInterface;
@@ -44,7 +44,7 @@ final class AppSectionRouteLoader extends Loader
      * @param LoaderResolverInterface $loader   Route loader resolver
      * @param array                   $sections Sections as associative array, each entry
      *                                          must contain at least a 'prefix', and optionally
-     *                                          host_pattern, host, host_requirements
+     *                                          host_pattern, host, requirements and defaults
      */
     public function __construct(LoaderResolverInterface $loader, array $sections)
     {
@@ -85,8 +85,11 @@ final class AppSectionRouteLoader extends Loader
         $collection->addPrefix($section['prefix']);
 
         if (isset($this->sections[$parts['section']]['host'])) {
-            $collection->setHost($section['host'], $section['host_defaults'], $section['host_requirements']);
+            $collection->setHost($section['host']);
         }
+
+        $collection->addRequirements($section['requirements'] ?? []);
+        $collection->addDefaults($section['defaults'] ?? []);
 
         return $collection;
     }
@@ -96,6 +99,6 @@ final class AppSectionRouteLoader extends Loader
      */
     public function supports($resource, $type = null)
     {
-        return $type === 'app_section';
+        return 'app_section' === $type;
     }
 }

@@ -11,10 +11,10 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Rollerworks\Bundle\AppSectioningBundle\Tests\Routing;
+namespace Rollerworks\Component\AppSectioning\Tests\Routing;
 
 use PHPUnit\Framework\TestCase;
-use Rollerworks\Bundle\AppSectioningBundle\Routing\AppSectionRouteLoader;
+use Rollerworks\Component\AppSectioning\Routing\AppSectionRouteLoader;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Loader\LoaderResolverInterface;
 use Symfony\Component\Routing\Route;
@@ -30,19 +30,19 @@ final class AppSectionRouteLoaderTest extends TestCase
     private const APP_SECTIONS = [
         'api' => [
             'prefix' => 'api/',
-            'host_requirements' => [],
-            'host_defaults' => [],
+            'requirements' => [],
+            'defaults' => [],
         ],
         'frontend' => [
             'prefix' => '/',
-            'host_requirements' => [],
-            'host_defaults' => [],
+            'requirements' => [],
+            'defaults' => [],
         ],
         'backend' => [
             'prefix' => '/',
             'host' => 'example.{tld}',
-            'host_requirements' => ['tld' => 'net|com'],
-            'host_defaults' => ['tld' => 'com'],
+            'requirements' => ['tld' => 'net|com'],
+            'defaults' => ['tld' => 'com'],
         ],
     ];
 

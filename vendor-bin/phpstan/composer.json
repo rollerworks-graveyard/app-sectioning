@@ -1,0 +1,7 @@
+{
+    "require-dev": {
+        "phpstan/phpstan-phpunit": "^0.9.4",
+        "jangregor/phpstan-prophecy": "^0.1.0",
+        "lookyman/phpstan-symfony": "^0.2.0"
+    }
+}

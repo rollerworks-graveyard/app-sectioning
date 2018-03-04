@@ -1,15 +1,14 @@
 Security firewall configuration
 ===============================
 
-Once your sections are registered and configured,
-you can use the parameters for various parts of your application.
-Including the security firewalls.
+Once your sections are registered and configured, you can use the parameters 
+for various parts of your application. Including the security firewalls.
 
-Say you have two sections with the same service-prefix (acme.section),
+Say you have two sections with the same service-prefix `acme.section`,
 and want to configure the firewalls:
 
 ```yaml
-# app/config/security.yml
+# config/packages/security.yml
 security:
 
     # ...

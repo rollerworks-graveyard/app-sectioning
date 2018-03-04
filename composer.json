@@ -1,7 +1,7 @@
 {
-    "name": "rollerworks/app-sectioning-bundle",
+    "name": "rollerworks/app-sectioning",
     "description": "Configuration helper for separating your Symfony application into multiple sections",
-    "type": "symfony-bundle",
+    "type": "library",
     "license": "MIT",
     "authors": [
         {
@@ -11,29 +11,32 @@
     ],
     "require": {
         "php": "^7.1",
-        "symfony/framework-bundle": "^3.3.6 || ^4.0",
-        "icomefromthenet/reverse-regex": "^0.0.6.3"
+        "symfony/dependency-injection": "^3.4 || ^4.0",
+        "symfony/http-foundation": "^3.4 || ^4.0",
+        "symfony/routing": "^3.4 || ^4.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^3.3.6 || ^4.0",
         "symfony/browser-kit": "^3.3.6 || ^4.0",
+        "symfony/framework-bundle": "^3.3.6 || ^4.0",
         "matthiasnoback/symfony-dependency-injection-test": "^2.1.0",
-        "phpunit/phpunit": "^6.3"
+        "phpunit/phpunit": "^6.3",
+        "bamarni/composer-bin-plugin": "^1.2"
     },
     "autoload": {
         "psr-4": {
-            "Rollerworks\\Bundle\\AppSectioningBundle\\": "src/"
+            "Rollerworks\\Component\\AppSectioning\\": "src/"
         },
         "exclude-from-classmap": ["test/"]
     },
     "autoload-dev": {
         "psr-4": {
-            "Rollerworks\\Bundle\\AppSectioningBundle\\Tests\\": "tests/"
+            "Rollerworks\\Component\\AppSectioning\\Tests\\": "tests/"
         }
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "0.4-dev"
+            "dev-master": "0.5-dev"
         }
     }
 }

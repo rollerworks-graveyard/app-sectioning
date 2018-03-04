@@ -11,14 +11,20 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Rollerworks\Bundle\AppSectioningBundle\Tests\Functional\Application;
+namespace Rollerworks\Component\AppSectioning\Tests\Functional\Application;
 
+use Rollerworks\Component\AppSectioning\SectioningFactory;
+use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\Routing\RouteCollectionBuilder;
 
 class AppKernel extends Kernel
 {
+    use MicroKernelTrait;
+
     private $config;
 
     public function __construct($config, $debug = true)
@@ -45,8 +51,6 @@ class AppKernel extends Kernel
     {
         $bundles = [
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
-            new \Rollerworks\Bundle\AppSectioningBundle\RollerworksAppSectioningBundle(),
-
             new AppBundle\AppBundle(),
         ];
 
@@ -62,11 +66,6 @@ class AppKernel extends Kernel
         return $this->rootDir;
     }
 
-    public function registerContainerConfiguration(LoaderInterface $loader)
-    {
-        $loader->load($this->config);
-    }
-
     public function getCacheDir()
     {
         return (getenv('TMPDIR') ?: sys_get_temp_dir()).'/AppSectioning/'.substr(sha1($this->config), 0, 6);
@@ -80,5 +79,19 @@ class AppKernel extends Kernel
     public function unserialize($str)
     {
         call_user_func_array([$this, '__construct'], unserialize($str));
+    }
+
+    protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader): void
+    {
+        $loader->load($this->config);
+
+        (new SectioningFactory($container, 'park_manager.section'))
+            ->fromArray(['backend', 'frontend'], $container->getParameter('app_sections'))
+            ->register();
+    }
+
+    protected function configureRoutes(RouteCollectionBuilder $routes): void
+    {
+        $routes->import(__DIR__.'/config/routing.yml');
     }
 }
