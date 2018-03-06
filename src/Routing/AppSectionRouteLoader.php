@@ -84,12 +84,15 @@ final class AppSectionRouteLoader extends Loader
         // N.B. this needs to be called 'after' the importing!
         $collection->addPrefix($section['prefix']);
 
-        if (isset($this->sections[$parts['section']]['host'])) {
+        if (isset($section['host'])) {
             $collection->setHost($section['host']);
+            $collection->addRequirements($section['requirements']);
+            $collection->addDefaults($section['defaults']);
         }
 
-        $collection->addRequirements($section['requirements'] ?? []);
-        $collection->addDefaults($section['defaults'] ?? []);
+        if ($section['is_secure']) {
+            $collection->setSchemes(['https']);
+        }
 
         return $collection;
     }

@@ -3,11 +3,5 @@ imports:
 
 parameters:
     app_sections:
-        backend:
-            prefix: backend/
-            host: example.{tld}
-            requirements: { id: '\d+', tld: com }
-            defaults: { tld: com }
-        frontend:
-            prefix: /
-            host: null
+        backend: 'example.{tld;com;com}/backend'
+        frontend: '/'

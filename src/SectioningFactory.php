@@ -60,11 +60,11 @@ final class SectioningFactory
      * Set the configuration for a section.
      *
      * @param string $name   Name of the section, must be unique within the service-prefix
-     * @param array  $config Configuration of the section, must contain a 'prefix' key
+     * @param string $config Configuration of the section, URI pattern
      *
      * @return SectioningFactory Fluent interface
      */
-    public function set(string $name, array $config): self
+    public function set(string $name, string $config): self
     {
         try {
             $this->sections[$name] = new SectionConfiguration($config);
@@ -88,46 +88,5 @@ final class SectioningFactory
         $this->container->register('rollerworks.app_section.route_loader', AppSectionRouteLoader::class)
             ->setArguments([new Reference('routing.resolver'), $configurator->exportConfiguration()])
             ->addTag('routing.loader');
-    }
-
-    /**
-     * @throws \InvalidArgumentException When the configuration is invalid
-     */
-    public function fromArray(array $required, array $sections): self
-    {
-        $missingKeys = [];
-
-        foreach ($required as $key) {
-            if (!array_key_exists($key, $sections)) {
-                $missingKeys[] = $key;
-            } elseif (!\is_array($sections[$key])) {
-                throw new \InvalidArgumentException(sprintf('AppSection "%s" configuration expects an array got %s instead.', $key, gettype($sections[$key])));
-            } else {
-                $this->set($key, $sections[$key]);
-            }
-        }
-
-        if ($missingKeys) {
-            throw new \InvalidArgumentException(sprintf('The following AppSections are required but were not set: %s', implode(', ', $missingKeys)));
-        }
-
-        return $this;
-    }
-
-    public function fromJson(array $required, string $value): self
-    {
-        $sections = json_decode($value, true, 512, JSON_BIGINT_AS_STRING);
-
-        if (null === $sections) {
-            throw new \InvalidArgumentException(sprintf('AppSections configuration is invalid. Message: %s', json_last_error_msg()));
-        }
-
-        if (!\is_array($sections)) {
-            throw new \InvalidArgumentException('AppSections configuration is expected to be an array.');
-        }
-
-        $this->fromArray($required, $sections);
-
-        return $this;
     }
 }

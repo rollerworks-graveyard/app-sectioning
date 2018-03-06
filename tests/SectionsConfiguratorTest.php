@@ -28,22 +28,26 @@ final class SectionsConfiguratorTest extends TestCase
     public function it_configures_the_paths_by_prefix()
     {
         $configurator = new SectionsConfigurator();
-        $configurator->set('frontend', new SectionConfiguration(['prefix' => 'client/', 'requirements' => ['foo' => '\d+']]));
-        $configurator->set('backend', new SectionConfiguration(['prefix' => 'backend']));
+        $configurator->set('frontend', new SectionConfiguration('/client/'));
+        $configurator->set('backend', new SectionConfiguration('https://example.com/backend'));
 
         $this->assertEquals(
             [
                 'frontend' => [
+                    'is_secure' => false,
                     'host' => null,
+                    'domain' => null,
                     'host_pattern' => null,
                     'prefix' => 'client/',
                     'path' => '^/client/',
-                    'requirements' => ['foo' => '\d+'],
+                    'requirements' => [],
                     'defaults' => [],
                 ],
                 'backend' => [
-                    'host' => null,
-                    'host_pattern' => null,
+                    'is_secure' => true,
+                    'host' => 'example.com',
+                    'domain' => 'example.com',
+                    'host_pattern' => '^example\.com$',
                     'prefix' => 'backend/',
                     'path' => '^/backend/',
                     'requirements' => [],
@@ -60,13 +64,15 @@ final class SectionsConfiguratorTest extends TestCase
     public function it_configures_the_host_pattern_by_host()
     {
         $configurator = new SectionsConfigurator();
-        $configurator->set('frontend', new SectionConfiguration(['prefix' => '/', 'host' => 'example.net']));
-        $configurator->set('backend', new SectionConfiguration(['prefix' => '/', 'host' => 'example.com']));
+        $configurator->set('frontend', new SectionConfiguration('example.net/'));
+        $configurator->set('backend', new SectionConfiguration('example.com/'));
 
         $this->assertEquals(
             [
                 'frontend' => [
+                    'is_secure' => false,
                     'host' => 'example.net',
+                    'domain' => 'example.net',
                     'host_pattern' => '^example\.net$',
                     'prefix' => '/',
                     'path' => '^/',
@@ -74,7 +80,9 @@ final class SectionsConfiguratorTest extends TestCase
                     'defaults' => [],
                 ],
                 'backend' => [
+                    'is_secure' => false,
                     'host' => 'example.com',
+                    'domain' => 'example.com',
                     'host_pattern' => '^example\.com$',
                     'prefix' => '/',
                     'path' => '^/',
@@ -92,14 +100,16 @@ final class SectionsConfiguratorTest extends TestCase
     public function its_configured_path_excludes_other_paths()
     {
         $configurator = new SectionsConfigurator();
-        $configurator->set('frontend', new SectionConfiguration(['prefix' => '/']));
-        $configurator->set('backend', new SectionConfiguration(['prefix' => 'backend']));
-        $configurator->set('api', new SectionConfiguration(['prefix' => 'api']));
+        $configurator->set('frontend', new SectionConfiguration('/'));
+        $configurator->set('backend', new SectionConfiguration('/backend'));
+        $configurator->set('api', new SectionConfiguration('/api'));
 
         $this->assertEquals(
             [
                 'frontend' => [
+                    'is_secure' => false,
                     'host' => null,
+                    'domain' => null,
                     'host_pattern' => null,
                     'prefix' => '/',
                     'path' => '^/(?!(backend|api)/)',
@@ -107,7 +117,9 @@ final class SectionsConfiguratorTest extends TestCase
                     'defaults' => [],
                 ],
                 'backend' => [
+                    'is_secure' => false,
                     'host' => null,
+                    'domain' => null,
                     'host_pattern' => null,
                     'prefix' => 'backend/',
                     'path' => '^/backend/',
@@ -115,7 +127,9 @@ final class SectionsConfiguratorTest extends TestCase
                     'defaults' => [],
                 ],
                 'api' => [
+                    'is_secure' => false,
                     'host' => null,
+                    'domain' => null,
                     'host_pattern' => null,
                     'prefix' => 'api/',
                     'path' => '^/api/',
@@ -133,15 +147,17 @@ final class SectionsConfiguratorTest extends TestCase
     public function its_configured_path_excludes_other_sub_paths()
     {
         $configurator = new SectionsConfigurator();
-        $configurator->set('frontend', new SectionConfiguration(['prefix' => '/']));
-        $configurator->set('backend', new SectionConfiguration(['prefix' => 'backend']));
-        $configurator->set('backend_api', new SectionConfiguration(['prefix' => 'api/backend']));
-        $configurator->set('api', new SectionConfiguration(['prefix' => 'api']));
+        $configurator->set('frontend', new SectionConfiguration('/'));
+        $configurator->set('backend', new SectionConfiguration('/backend'));
+        $configurator->set('backend_api', new SectionConfiguration('/api/backend'));
+        $configurator->set('api', new SectionConfiguration('/api'));
 
         $this->assertEquals(
             [
                 'frontend' => [
+                    'is_secure' => false,
                     'host' => null,
+                    'domain' => null,
                     'host_pattern' => null,
                     'prefix' => '/',
                     'path' => '^/(?!(backend|api)/)',
@@ -149,7 +165,9 @@ final class SectionsConfiguratorTest extends TestCase
                     'defaults' => [],
                 ],
                 'backend' => [
+                    'is_secure' => false,
                     'host' => null,
+                    'domain' => null,
                     'host_pattern' => null,
                     'prefix' => 'backend/',
                     'path' => '^/backend/',
@@ -157,7 +175,9 @@ final class SectionsConfiguratorTest extends TestCase
                     'defaults' => [],
                 ],
                 'backend_api' => [
+                    'is_secure' => false,
                     'host' => null,
+                    'domain' => null,
                     'host_pattern' => null,
                     'prefix' => 'api/backend/',
                     'path' => '^/api/backend/',
@@ -165,7 +185,9 @@ final class SectionsConfiguratorTest extends TestCase
                     'defaults' => [],
                 ],
                 'api' => [
+                    'is_secure' => false,
                     'host' => null,
+                    'domain' => null,
                     'host_pattern' => null,
                     'prefix' => 'api/',
                     'path' => '^/api/(?!(backend)/)',
@@ -183,14 +205,16 @@ final class SectionsConfiguratorTest extends TestCase
     public function its_configured_path_excludes_other_sub_paths_in_host()
     {
         $configurator = new SectionsConfigurator();
-        $configurator->set('frontend', new SectionConfiguration(['prefix' => '/', 'host' => 'example.com']));
-        $configurator->set('backend', new SectionConfiguration(['prefix' => 'backend', 'host' => 'example.com']));
-        $configurator->set('backend_api', new SectionConfiguration(['prefix' => 'api/backend', 'host' => 'example.com']));
-        $configurator->set('api', new SectionConfiguration(['prefix' => 'api', 'host' => 'example.com']));
+        $configurator->set('frontend', new SectionConfiguration('example.com/'));
+        $configurator->set('backend', new SectionConfiguration('example.com/backend'));
+        $configurator->set('backend_api', new SectionConfiguration('example.com/api/backend'));
+        $configurator->set('api', new SectionConfiguration('example.com/api'));
 
         $this->assertEquals(
             [
                 'frontend' => [
+                    'is_secure' => false,
+                    'domain' => 'example.com',
                     'host' => 'example.com',
                     'host_pattern' => '^example\.com$',
                     'prefix' => '/',
@@ -199,6 +223,8 @@ final class SectionsConfiguratorTest extends TestCase
                     'defaults' => [],
                 ],
                 'backend' => [
+                    'is_secure' => false,
+                    'domain' => 'example.com',
                     'host' => 'example.com',
                     'host_pattern' => '^example\.com$',
                     'prefix' => 'backend/',
@@ -207,6 +233,8 @@ final class SectionsConfiguratorTest extends TestCase
                     'defaults' => [],
                 ],
                 'backend_api' => [
+                    'is_secure' => false,
+                    'domain' => 'example.com',
                     'host' => 'example.com',
                     'host_pattern' => '^example\.com$',
                     'prefix' => 'api/backend/',
@@ -215,6 +243,8 @@ final class SectionsConfiguratorTest extends TestCase
                     'defaults' => [],
                 ],
                 'api' => [
+                    'is_secure' => false,
+                    'domain' => 'example.com',
                     'host' => 'example.com',
                     'host_pattern' => '^example\.com$',
                     'prefix' => 'api/',
@@ -233,14 +263,16 @@ final class SectionsConfiguratorTest extends TestCase
     public function its_configured_path_excludes_other_sub_paths_in_host_pattern()
     {
         $configurator = new SectionsConfigurator();
-        $configurator->set('frontend', new SectionConfiguration(['prefix' => '/', 'host' => 'example.{tld}', 'requirements' => ['tld' => 'com|net'], 'defaults' => ['tld' => 'com']]));
-        $configurator->set('backend', new SectionConfiguration(['prefix' => 'backend', 'host' => 'example.com']));
-        $configurator->set('backend_api', new SectionConfiguration(['prefix' => 'api/backend', 'host' => 'example.com']));
-        $configurator->set('api', new SectionConfiguration(['prefix' => 'api', 'host' => 'example.com']));
+        $configurator->set('frontend', new SectionConfiguration('example.{tld;com;com|net}/'));
+        $configurator->set('backend', new SectionConfiguration('example.com/backend'));
+        $configurator->set('backend_api', new SectionConfiguration('example.com/api/backend'));
+        $configurator->set('api', new SectionConfiguration('example.com/api'));
 
         $this->assertEquals(
             [
                 'frontend' => [
+                    'is_secure' => false,
+                    'domain' => null,
                     'host' => 'example.{tld}',
                     'host_pattern' => '^example\.(?P<tld>com|net)$',
                     'prefix' => '/',
@@ -249,6 +281,8 @@ final class SectionsConfiguratorTest extends TestCase
                     'defaults' => ['tld' => 'com'],
                 ],
                 'backend' => [
+                    'is_secure' => false,
+                    'domain' => 'example.com',
                     'host' => 'example.com',
                     'host_pattern' => '^example\.com$',
                     'prefix' => 'backend/',
@@ -257,6 +291,8 @@ final class SectionsConfiguratorTest extends TestCase
                     'defaults' => [],
                 ],
                 'backend_api' => [
+                    'is_secure' => false,
+                    'domain' => 'example.com',
                     'host' => 'example.com',
                     'host_pattern' => '^example\.com$',
                     'prefix' => 'api/backend/',
@@ -265,6 +301,8 @@ final class SectionsConfiguratorTest extends TestCase
                     'defaults' => [],
                 ],
                 'api' => [
+                    'is_secure' => false,
+                    'domain' => 'example.com',
                     'host' => 'example.com',
                     'host_pattern' => '^example\.com$',
                     'prefix' => 'api/',
@@ -285,17 +323,15 @@ final class SectionsConfiguratorTest extends TestCase
         $container = new ContainerBuilder();
 
         $configurator = new SectionsConfigurator();
-        $configurator->set('frontend', new SectionConfiguration(['prefix' => '/', 'host' => 'example.com']));
-        $configurator->set('backend', new SectionConfiguration([
-                'prefix' => 'backend',
-                'host' => 'example.{tld}',
-                'defaults' => ['tld' => 'com'],
-                'requirements' => ['tld' => 'com|net'],
-            ])
+        $configurator->set('frontend', new SectionConfiguration('https://example.com/'));
+        $configurator->set('backend', new SectionConfiguration('example.{tld;com;com|net}/backend')
         );
 
         $configurator->registerToContainer($container, 'acme.section');
 
+        $this->assertTrue($container->hasParameter('acme.section.frontend.is_secure'));
+        $this->assertTrue($container->hasParameter('acme.section.frontend.channel'));
+        $this->assertTrue($container->hasParameter('acme.section.frontend.domain'));
         $this->assertTrue($container->hasParameter('acme.section.frontend.host'));
         $this->assertTrue($container->hasParameter('acme.section.frontend.host_pattern'));
         $this->assertTrue($container->hasParameter('acme.section.frontend.requirements'));
@@ -304,6 +340,9 @@ final class SectionsConfiguratorTest extends TestCase
         $this->assertTrue($container->hasParameter('acme.section.frontend.path'));
         $this->assertTrue($container->hasDefinition('acme.section.frontend.request_matcher'));
 
+        $this->assertTrue($container->hasParameter('acme.section.backend.is_secure'));
+        $this->assertTrue($container->hasParameter('acme.section.backend.channel'));
+        $this->assertTrue($container->hasParameter('acme.section.backend.domain'));
         $this->assertTrue($container->hasParameter('acme.section.backend.host'));
         $this->assertTrue($container->hasParameter('acme.section.backend.host_pattern'));
         $this->assertTrue($container->hasParameter('acme.section.backend.requirements'));
@@ -312,6 +351,9 @@ final class SectionsConfiguratorTest extends TestCase
         $this->assertTrue($container->hasParameter('acme.section.backend.path'));
         $this->assertTrue($container->hasDefinition('acme.section.backend.request_matcher'));
 
+        $this->assertTrue($container->getParameter('acme.section.frontend.is_secure'));
+        $this->assertEquals('https', $container->getParameter('acme.section.frontend.channel'));
+        $this->assertEquals('example.com', $container->getParameter('acme.section.frontend.domain'));
         $this->assertEquals('example.com', $container->getParameter('acme.section.frontend.host'));
         $this->assertEquals('^example\.com$', $container->getParameter('acme.section.frontend.host_pattern'));
         $this->assertEquals([], $container->getParameter('acme.section.frontend.defaults'));
@@ -319,6 +361,9 @@ final class SectionsConfiguratorTest extends TestCase
         $this->assertEquals('/', $container->getParameter('acme.section.frontend.prefix'));
         $this->assertEquals('^/(?!(backend)/)', $container->getParameter('acme.section.frontend.path'));
 
+        $this->assertFalse($container->getParameter('acme.section.backend.is_secure'));
+        $this->assertNull($container->getParameter('acme.section.backend.channel'));
+        $this->assertNull($container->getParameter('acme.section.backend.domain'));
         $this->assertEquals('example.{tld}', $container->getParameter('acme.section.backend.host'));
         $this->assertEquals('^example\.(?P<tld>com|net)$', $container->getParameter('acme.section.backend.host_pattern'));
         $this->assertEquals(['tld' => 'com'], $container->getParameter('acme.section.backend.defaults'));
@@ -344,15 +389,8 @@ final class SectionsConfiguratorTest extends TestCase
     public function it_throws_an_ValidatorException_when_section_conflicts()
     {
         $configurator = new SectionsConfigurator();
-        $configurator->set('first', new SectionConfiguration([
-            'prefix' => '/',
-            'host' => 'example.com',
-        ]));
-
-        $configurator->set('second', new SectionConfiguration([
-            'prefix' => '/', // same as 'first'
-            'host' => 'example.com',
-        ]));
+        $configurator->set('first', new SectionConfiguration('example.com/'));
+        $configurator->set('second', new SectionConfiguration('example.com/'));
 
         $failedSections = [
             // primary => [host, prefix, conflicts]
@@ -372,24 +410,9 @@ final class SectionsConfiguratorTest extends TestCase
     public function it_throws_an_ValidatorException_when_section_conflicts_with_patterns()
     {
         $configurator = new SectionsConfigurator();
-        $configurator->set('first', new SectionConfiguration([
-            'prefix' => '/',
-            'host' => 'example.{tld}',
-            'requirements' => ['tld' => 'com|net'],
-            'defaults' => ['tld' => 'com'],
-        ]));
-
-        $configurator->set('second', new SectionConfiguration([
-            'prefix' => '/', // same as 'first'
-            'host' => 'example.{ext}',
-            'requirements' => ['ext' => 'com|net'],
-            'defaults' => ['ext' => 'net'],
-        ]));
-
-        $configurator->set('third', new SectionConfiguration([
-            'prefix' => '/app',
-            'host' => 'example.com',
-        ]));
+        $configurator->set('first', new SectionConfiguration('example.{tld;com;com|net}/'));
+        $configurator->set('second', new SectionConfiguration('example.{ext;net;com|net}/'));
+        $configurator->set('third', new SectionConfiguration('example.com/app'));
 
         $failedSections = [
             // primary => [host, prefix, conflicts]
@@ -412,32 +435,14 @@ final class SectionsConfiguratorTest extends TestCase
     public function it_throws_an_ValidatorException_when_sections_conflicts()
     {
         $configurator = new SectionsConfigurator();
-        $configurator->set('first', new SectionConfiguration([
-            'prefix' => '/',
-            'host' => 'example.com',
-        ]));
+        $configurator->set('first', new SectionConfiguration('example.com/'));
+        $configurator->set('second', new SectionConfiguration('example.com/'));
+        $configurator->set('third', new SectionConfiguration('example.com/'));
 
-        $configurator->set('second', new SectionConfiguration([
-            'prefix' => '/', // same as 'first'
-            'host' => 'example.com',
-        ]));
+        $configurator->set('first1', new SectionConfiguration('/foo'));
+        $configurator->set('second2', new SectionConfiguration('/foo'));
 
-        $configurator->set('third', new SectionConfiguration([
-            'prefix' => '/', // same as 'first'
-            'host' => 'example.com',
-        ]));
-
-        $configurator->set('first1', new SectionConfiguration([
-            'prefix' => '/foo',
-        ]));
-
-        $configurator->set('second2', new SectionConfiguration([
-            'prefix' => '/foo', // same as 'first1'
-        ]));
-
-        $configurator->set('good', new SectionConfiguration([
-            'prefix' => '/something',
-        ]));
+        $configurator->set('good', new SectionConfiguration('/something'));
 
         $failedSections = [
             // primary => [host, prefix, conflicts]
@@ -461,34 +466,15 @@ final class SectionsConfiguratorTest extends TestCase
     public function it_throws_an_ValidatorException_when_sections_conflicts_by_prefix_and_no_host()
     {
         $configurator = new SectionsConfigurator();
-        $configurator->set('first', new SectionConfiguration([
-            'prefix' => '/',
-            'host' => 'example.com',
-        ]));
-
-        $configurator->set('second', new SectionConfiguration([
-            'prefix' => '/', // same as 'first'
-            'host' => 'example.com',
-        ]));
-
-        $configurator->set('third', new SectionConfiguration([
-            'prefix' => '/', // same as 'first'
-            'host' => 'example.com',
-        ]));
+        $configurator->set('first', new SectionConfiguration('example.com/'));
+        $configurator->set('second', new SectionConfiguration('example.com/'));
+        $configurator->set('third', new SectionConfiguration('example.com/'));
 
         //
         // conflicts with 'first', no host (so '*') and equal prefix '/'
-        $configurator->set('first1', new SectionConfiguration([
-            'prefix' => '/', // conflicts with 'first' because of no host and equal '/'
-        ]));
-
-        $configurator->set('second2', new SectionConfiguration([
-            'prefix' => '/', // conflicts with 'first' because of no host and equal '/'
-        ]));
-
-        $configurator->set('good', new SectionConfiguration([
-            'prefix' => '/something',
-        ]));
+        $configurator->set('first1', new SectionConfiguration('/')); // conflicts with 'first' because of no host and equal '/'
+        $configurator->set('second2', new SectionConfiguration('/')); // conflicts with 'first' because of no host and equal '/'
+        $configurator->set('good', new SectionConfiguration('/something'));
 
         $failedSections = [
             // primary => [host, prefix, conflicts]

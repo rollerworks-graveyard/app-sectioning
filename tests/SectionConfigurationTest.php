@@ -21,26 +21,19 @@ final class SectionConfigurationTest extends TestCase
     public function provideInvalidConfiguration()
     {
         return [
-            [[], 'Prefix must be an string and cannot be empty. Use at least "/".'],
-            [['prefix' => []], 'Prefix must be an string and cannot be empty. Use at least "/".'],
-            [['prefix' => '{he}/'], 'Placeholders in the "prefix" are not accepted.'],
-            [['prefix' => '/', 'defaults' => ''], 'Keys "requirements" and "default" must be arrays or absent.'],
-            [['prefix' => '/', 'requirements' => ''], 'Keys "requirements" and "default" must be arrays or absent.'],
+            ['', null],
+            ['https:', null],
+            ['https://', null],
+            ['https:///', null],
+            ['https://e', null],
+            ['/{he}', 'Attributes in the "prefix" are not accepted.'],
 
             // with host requirement
-            [['prefix' => '/', 'host' => '{he}.nl'], 'Missing requirement for attribute "he".'],
-            [
-                ['prefix' => '/', 'host' => '{he}.nl', 'requirements' => ['he' => 'ok']],
-                'Missing default value for attribute "he".',
-            ],
-            [
-                ['prefix' => '/', 'host' => '{he}.nl', 'requirements' => ['he' => 'ok?'], 'defaults' => ['he' => 'ok']],
-                'A host requirement can only hold letters, numbers with middle and underscores separated by "|" (to allow more combinations).',
-            ],
-            [
-                ['prefix' => '/', 'host' => '{he}.nl', 'requirements' => ['he' => '|'], 'defaults' => ['he' => 'ok']],
-                'A host requirement can only hold letters, numbers with middle and underscores separated by "|" (to allow more combinations).',
-            ],
+            ['{he}.nl/', 'Invalid host attribute around "{he}". Expected something like: "{name;default;value1|value2}".'],
+            ['{he;;}.nl/', 'Invalid host attribute around "{he;;}". Expected something like: "{name;default;value1|value2}".'],
+            ['{he,;}.nl/', 'Invalid host attribute around "{he,;}". Expected something like: "{name;default;value1|value2}".'],
+            ['{he;he;fo|bar|}.nl/', 'Invalid host attribute around "{he;he;fo|bar|}". Expected something like: "{name;default;value1|value2}".'],
+            ['{he;he;fo|bar}.{he;w;o}/', 'Host attribute "he" is already used.'],
         ];
     }
 
@@ -48,10 +41,10 @@ final class SectionConfigurationTest extends TestCase
      * @test
      * @dataProvider provideInvalidConfiguration
      */
-    public function it_validates_configuration(array $config, $message)
+    public function it_validates_configuration(string $config, ?string $message)
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage($message);
+        $this->expectExceptionMessage($message ?? sprintf('Pattern "%s" contains one or more errors.', $config));
 
         new SectionConfiguration($config);
     }
@@ -61,23 +54,26 @@ final class SectionConfigurationTest extends TestCase
      */
     public function its_default_host_value_is_null()
     {
-        $configuration = (new SectionConfiguration(['prefix' => '/']))->getConfig();
+        $configuration = (new SectionConfiguration('/'));
 
-        $this->assertArrayHasKey('prefix', $configuration);
-        $this->assertArrayHasKey('host', $configuration);
-
-        $this->assertNull($configuration['host']);
+        $this->assertNull($configuration->host);
+        $this->assertNull($configuration->domain);
+        $this->assertFalse($configuration->isSecure);
+        $this->assertEquals('/', $configuration->prefix);
     }
 
     /**
      * @test
      */
-    public function it_always_provides_a_prefix_and_host_configuration()
+    public function it_sets_domain_when_host_is_set_without_attributes()
     {
-        $configuration = (new SectionConfiguration(['prefix' => 'something', 'host' => 'example.com']))->getConfig();
+        $configuration = (new SectionConfiguration('example.com/'));
+        $this->assertEquals('example.com', $configuration->domain);
+        $this->assertEquals('example.com', $configuration->host);
 
-        $this->assertArrayHasKey('prefix', $configuration);
-        $this->assertArrayHasKey('host', $configuration);
+        $configuration = (new SectionConfiguration('example.{tld;com;com}/'));
+        $this->assertNull($configuration->domain);
+        $this->assertEquals('example.{tld}', $configuration->host);
     }
 
     /**
@@ -85,33 +81,12 @@ final class SectionConfigurationTest extends TestCase
      */
     public function it_converts_the_prefix_to_lowercase_and_ensures_slashes()
     {
-        $configuration = (new SectionConfiguration(['prefix' => 'Something', 'host' => 'Example.Com']))->getConfig();
-        $this->assertEquals('something/', $configuration['prefix']);
+        $this->assertEquals('something/', (new SectionConfiguration('Example.com/Something'))->prefix);
+        $this->assertEquals('something/', (new SectionConfiguration('Example.com/Something/'))->prefix);
+        $this->assertEquals('something/', (new SectionConfiguration('/Something/'))->prefix);
+        $this->assertEquals('foo/', (new SectionConfiguration('/foo'))->prefix);
 
-        $configuration = (new SectionConfiguration(['prefix' => '/', 'host' => 'Example.Com']))->getConfig();
-        $this->assertEquals('/', $configuration['prefix']);
-
-        $configuration = (new SectionConfiguration(['prefix' => '//', 'host' => 'Example.Com']))->getConfig();
-        $this->assertEquals('/', $configuration['prefix']);
-
-        $configuration = (new SectionConfiguration(['prefix' => '/foo/', 'host' => 'Example.Com']))->getConfig();
-        $this->assertEquals('foo/', $configuration['prefix']);
-
-        $configuration = (new SectionConfiguration(['prefix' => '/Something/', 'host' => 'Example.Com']))->getConfig();
-        $this->assertEquals('something/', $configuration['prefix']);
-    }
-
-    /**
-     * This needs to be removed once support is added.
-     *
-     * @test
-     */
-    public function it_throws_when_placeholders_are_found_prefix()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Placeholders in the "prefix" are not accepted.');
-
-        new SectionConfiguration(['prefix' => '/{_local}/']);
+        // Note. foo/ assumes foo is the host. Make sure the prefix always begins with a /
     }
 
     /**
@@ -119,30 +94,23 @@ final class SectionConfigurationTest extends TestCase
      */
     public function it_returns_whether_host_names_are_equal()
     {
-        self::assertTrue(self::hostsEquals('example.com', 'example.com'));
-        self::assertTrue(self::hostsEqualsWithPattern('example.{head}', 'example.{tld}', ['head' => 'com'], ['tld' => 'com']));
-        self::assertTrue(self::hostsEqualsWithPattern('example.{head}', 'example.{tld}', ['head' => 'com|nl'], ['tld' => 'com']));
-        self::assertTrue(self::hostsEqualsWithPattern('example.{head}', 'example.{tld}', ['head' => 'com'], ['tld' => 'com|nl']));
-        self::assertTrue(self::hostsEqualsWithPattern('example.nl', 'example.{tld}', [], ['tld' => 'com|nl']));
+        self::assertTrue(self::hostsEquals('example.com/', 'example.com/'));
+        self::assertTrue(self::hostsEquals('/', 'example.com/'));
+        self::assertTrue(self::hostsEquals('https://example.com/', 'http://example.com/'));
+        self::assertTrue(self::hostsEquals('example.{head;com;com}/', 'example.{tld;com;com}/'));
+        self::assertTrue(self::hostsEquals('example.{head;com;com}/', 'example.{tld;com;com|nl}/'));
+        self::assertTrue(self::hostsEquals('example.{head;com;com|nl}/', 'example.{tld;com;com}/'));
+        self::assertTrue(self::hostsEquals('example.nl/', 'example.{tld;com;com|nl}/'));
 
-        self::assertFalse(self::hostsEquals('example.com', 'example.com3'));
-        self::assertFalse(self::hostsEquals('example.he.com', 'example.com'));
-        self::assertFalse(self::hostsEqualsWithPattern('example.{head}', 'example.{tld}', ['head' => 'nl|nu'], ['tld' => 'com']));
-        self::assertFalse(self::hostsEqualsWithPattern('example.{head}.com', 'example.{tld}', ['head' => 'com'], ['tld' => 'com']));
-        self::assertFalse(self::hostsEqualsWithPattern('example.{tld}', 'example.{head}.com', ['tld' => 'com'], ['head' => 'com']));
+        self::assertFalse(self::hostsEquals('example.com/', 'example.com3/'));
+        self::assertFalse(self::hostsEquals('example.he.com/', 'example.com/'));
+        self::assertFalse(self::hostsEquals('example.{head;nl;nl|nu}/', 'example.{tld;com;com}/'));
+        self::assertFalse(self::hostsEquals('example.{head;com;com}.com/', 'example.{tld;com;com}/'));
+        self::assertFalse(self::hostsEquals('example.{tld;com;com}/', 'example.{head;com;com}.com/'));
     }
 
-    private static function hostsEquals(string $host1, string $host2): bool
+    private static function hostsEquals(string $pattern1, string $pattern2): bool
     {
-        return (new SectionConfiguration(['prefix' => '/', 'host' => $host1]))->hostEquals(
-            new SectionConfiguration(['prefix' => '/', 'host' => $host2])
-        );
-    }
-
-    private static function hostsEqualsWithPattern(string $host1, string $host2, array $requirements1, array $requirements2): bool
-    {
-        return (new SectionConfiguration(['prefix' => '/', 'host' => $host1, 'requirements' => $requirements1, 'defaults' => ['tld' => 'com', 'head' => 'com']]))->hostEquals(
-            new SectionConfiguration(['prefix' => '/', 'host' => $host2, 'requirements' => $requirements2, 'defaults' => ['tld' => 'com', 'head' => 'com']])
-        );
+        return (new SectionConfiguration($pattern1))->hostEquals(new SectionConfiguration($pattern2));
     }
 }

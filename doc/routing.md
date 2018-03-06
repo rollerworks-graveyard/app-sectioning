@@ -4,8 +4,7 @@ Routing configuration
 If you already configured the [security firewalls](firewall.md) it's now time 
 to configure the routing.
 
-**Note:** A section needs to be at the root of importing, you cannot import 
-a section as part of another import with a prefix and/or host.
+**Note:** A section needs to be at the root of importing (eg. config/routes.yaml).
 
 ## Route loader
 
@@ -19,11 +18,11 @@ resource type.
 ```yaml
 # config/routes.yml
 
-_acme_frontend:
-    resource: 'frontend:yml#@AcmeCoreBundle/Resources/config/routing/frontend.yml'
+_app_frontend:
+    resource: 'frontend:yml#@AppCoreBundle/Resources/config/routing/frontend.yml'
     type: app_section
 
-_acme_backend:
-    resource: 'backend#@AcmeCoreBundle/Resources/config/routing/backend.yml'
+_app_backend:
+    resource: 'backend#@AppCoreBundle/Resources/config/routing/backend.yml'
     type: app_section
 ```
