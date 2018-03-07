@@ -9,32 +9,27 @@ But this library does more!
 
 Say there are two sections:
 
-* Frontend - host: example.com prefix: /
-* Backend  - host: example.com prefix: backend/
+* Frontend - `example.com/`
+* Backend  - `example.com/backend/`
 
 Unless the 'backend' section is tried earlier the 'frontend' will always match!
-To prevent this, the path (regex) is configured to never match 'backend/'.
-Only when both share the same host group and only there is a conflict.
+To prevent this, each path (regexp) is constructed to never match for other
+sections within the same host group!.
 
 You then use these generated parameters for routing and the security firewalls.
-
-**Caution:** Registering a section name that is already
-used will overwrite the other one (without warning).
-
-This bundle is best used for multi-section applications and not decoupled bundles.
 
 Requirements
 ------------
 
-You need at least PHP 7.0 and the Symfony FrameworkBundle.
+You need at least PHP 7.1, the Symfony DependencyInjection, Routing and
+HttpFoundation Components. The FrameworkBundle and SecureBundle are optional.
 
 Documentation
 -------------
 
- * [Installation](doc/install.md)
- * [Configuration](doc/configuration.md)
- * [Security firewall](doc/firewall.md)
- * [Routing](doc/routing.md)
+ * [Installation](docs/install.md)
+ * [Security firewall](docs/firewall.md)
+ * [Routing](docs/routing.md)
 
 Versioning
 ----------

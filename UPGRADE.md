@@ -1,6 +1,20 @@
 UPGRADE
 =======
 
+## Upgrade FROM 0.5 to 0.6
+
+* The `SectioningFactory::fromJson()` and `SectioningFactory::fromArray()`
+  methods were removed.
+  
+* The second argument of the `SectioningFactory::set()` method now expects 
+  an URI pattern instead of an array. 
+  
+  See [documentation](docs/index.md) for supported formats.
+  
+* Non-host defaults and requirements for imported routes now need to be
+  declared in the imported routes instead. _The string URI format only
+  allow accepts variables for the host._
+
 ## Upgrade FROM 0.4 to 0.5
 
 * The namespace has changed from `Rollerworks\Bundle\AppSectioningBundle`
