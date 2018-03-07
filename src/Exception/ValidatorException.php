@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Rollerworks\Component\AppSectioning\Exception;
 
+/**
+ * @author Sebastiaan Stok <s.stok@rollerscapes.net>
+ */
 final class ValidatorException extends \LogicException
 {
     public static function sectionsConfigConflict($failedSections)

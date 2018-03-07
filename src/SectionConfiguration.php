@@ -15,7 +15,11 @@ namespace Rollerworks\Component\AppSectioning;
 
 use Symfony\Component\Routing\Route;
 
-/** @internal */
+/**
+ * @internal
+ *
+ * @author Sebastiaan Stok <s.stok@rollerscapes.net>
+ */
 final class SectionConfiguration
 {
     public $host;

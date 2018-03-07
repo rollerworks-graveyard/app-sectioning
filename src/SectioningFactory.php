@@ -20,24 +20,27 @@ use Symfony\Component\DependencyInjection\Reference;
 /**
  * SectioningFactory registers the sections and routing service.
  *
- * Example:
+ * Example1 (Using Container parameters):
+ * ```
+ * $sections = $container->getParameter('app_sections');
  * (new SectioningFactory($container, 'acme.sections'))
- *     ->set('section-name', ['configuration-as-provided-by-SectioningConfigurator'])
- *     ->set('section-name2', ['configuration-as-provided-by-SectioningConfigurator'])
+ *     ->set('section-name', $sections['section1'])
+ *     ->set('section-name2', $sections['section2'])
  *     ->register();
+ * ```
  *
- * Example ():
+ * Example2 (using Environment variables):
+ * ```
  * (new SectioningFactory($container, 'acme.sections'))
- *     ->fromArray(['section1', 'section2'], $container->getParameter('app_sections'))
- *     // fromJson(['section1', 'section2'], $_ENV['app_sections'] ?? '')
+ *     ->set('section-name', $_ENV['APP_SECTION1_URL'])
+ *     ->set('section-name2', $_ENV['APP_SECTION2_URL'])
  *     ->register();
+ * ```
  *
  * @author Sebastiaan Stok <s.stok@rollerscapes.net>
  */
 final class SectioningFactory
 {
-    public const TAG_NAME = 'rollerworks.app_section';
-
     private $container;
     private $servicePrefix;
 
