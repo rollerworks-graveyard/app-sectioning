@@ -29,16 +29,19 @@ final class AppSectionRouteLoaderTest extends TestCase
 
     private const APP_SECTIONS = [
         'api' => [
+            'is_secure' => true,
             'prefix' => 'api/',
             'requirements' => [],
             'defaults' => [],
         ],
         'frontend' => [
+            'is_secure' => false,
             'prefix' => '/',
             'requirements' => [],
             'defaults' => [],
         ],
         'backend' => [
+            'is_secure' => true,
             'prefix' => '/',
             'host' => 'example.{tld}',
             'requirements' => ['tld' => 'net|com'],
@@ -127,10 +130,12 @@ final class AppSectionRouteLoaderTest extends TestCase
         $routeCollection2 = new RouteCollection();
         $routeCollection2->add('backend_main', new Route('/', ['tld' => 'com'], ['tld' => 'net|com'], [], 'example.{tld}'));
         $routeCollection2->add('backend_user', new Route('user/', ['tld' => 'com'], ['tld' => 'net|com'], [], 'example.{tld}'));
+        $routeCollection2->setSchemes(['https']);
 
         $routeCollection3 = new RouteCollection();
         $routeCollection3->add('frontend_news', new Route('api/news/'));
         $routeCollection3->add('frontend_blog', new Route('api/blog/'));
+        $routeCollection3->setSchemes(['https']);
 
         $this->assertEquals($routeCollection1, $this->loader->load('frontend#something.yml'));
         $this->assertEquals($routeCollection2, $this->loader->load('backend:xml#something.xml'));

@@ -18,50 +18,61 @@ use Symfony\Component\Routing\Route;
 /** @internal */
 final class SectionConfiguration
 {
-    private $config;
+    public $host;
+    public $domain;
+    public $prefix;
+    public $path;
+    public $isSecure = false;
+    public $defaults = [];
+    public $requirements = [];
+    public $hostPattern;
 
-    public function __construct(array $config)
+    public function __construct(string $pattern)
     {
-        $config = array_merge(
-            [
-                'prefix' => '',
-                'host' => null,
-                'defaults' => [],
-                'requirements' => [],
-            ],
-            $config
-        );
-        $this->validateInputConfig($config);
+        if (!preg_match('%^(?P<schema>https?://)?(?P<host>[^/:]+)?(?P<prefix>(?<!/)/[^$]*)$%is', $pattern, $matches)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Pattern "%s" contains one or more errors. '.
+                    'Expected something like: "https://example.com/prefix", "example.com/", "/" or "example.{tld;default;accepted-values}/".',
+                    $pattern
+                )
+            );
+        }
 
-        $config['prefix'] = $this->normalizePrefix($config['prefix']);
-        $route = (new Route($config['prefix'], $config['defaults'], $config['requirements'], [], $config['host']))->compile();
-        $config['host_pattern'] = self::stripDelimiters($route->getHostRegex());
+        $host = $matches['host'];
+        $this->isSecure = 'https://' === $matches['schema'];
+        $this->host = $this->processHost($host);
+        $this->prefix = $this->processPrefix($matches['prefix']);
 
-        $this->config = $config;
-    }
+        if (null !== $this->host && false === strpos($this->host, '{')) {
+            $this->domain = $this->host;
+        }
 
-    /**
-     * @return array [prefix, host, host_pattern, defaults, requirements]
-     */
-    public function getConfig(): array
-    {
-        return $this->config;
+        $route = (new Route(
+            $this->prefix,
+            $this->defaults,
+            $this->requirements,
+            [],
+            (string) $this->host,
+            $this->isSecure ? ['https'] : []
+        ))->compile();
+        $this->hostPattern = self::stripDelimiters($route->getHostRegex());
     }
 
     public function hostEquals(self $config): bool
     {
         // A null host will always match anything.
-        if (null === $this->config['host'] || null === $config->config['host']) {
+        if (null === $this->host || null === $config->host) {
             return true;
         }
 
         // Neither has placeholders so we can safely compare them as-is.
-        if (!\count($this->config['requirements']) && !\count($config->config['requirements'])) {
-            return $this->config['host'] === $config->config['host'];
+        if (!\count($this->requirements) && !\count($config->requirements)) {
+            return $this->host === $config->host;
         }
 
-        $hostParts = explode('.', $this->config['host']);
-        $hostParts2 = explode('.', $config->config['host']);
+        $hostParts = explode('.', $this->host);
+        $hostParts2 = explode('.', $config->host);
 
         // Different groups are never equal, and can't be checked.
         if (\count($hostParts) !== \count($hostParts2)) {
@@ -69,8 +80,8 @@ final class SectionConfiguration
         }
 
         foreach ($hostParts as $idx => $hostToken) {
-            $accepted1 = $this->findAcceptedValues($hostToken, $this->config);
-            $accepted2 = $this->findAcceptedValues($hostParts2[$idx], $config->config);
+            $accepted1 = $this->findAcceptedValues($hostToken, $this);
+            $accepted2 = $this->findAcceptedValues($hostParts2[$idx], $config);
 
             if (!\count(array_intersect($accepted1, $accepted2))) {
                 return false;
@@ -81,56 +92,18 @@ final class SectionConfiguration
         return true;
     }
 
-    private function validateInputConfig(array $config)
+    public function toArray()
     {
-        if (!is_array($config['requirements']) || !is_array($config['defaults'])) {
-            throw new \InvalidArgumentException('Keys "requirements" and "default" must be arrays or absent.');
-        }
-
-        if (!is_string($config['prefix']) || '' === trim($config['prefix'])) {
-            throw new \InvalidArgumentException('Prefix must be an string and cannot be empty. Use at least "/".');
-        }
-
-        if (preg_match('#[{}]#', $config['prefix'])) {
-            throw new \InvalidArgumentException('Placeholders in the "prefix" are not accepted.');
-        }
-
-        if (false !== strpos((string) $config['host'], '{')) {
-            $varNames = [];
-
-            preg_match_all('#\{\w+\}#', $config['host'], $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
-            foreach ($matches as $match) {
-                $varNames[] = substr($match[0][0], 1, -1);
-            }
-
-            foreach ($varNames as $varName) {
-                if (!isset($config['requirements'][$varName])) {
-                    throw new \InvalidArgumentException(sprintf('Missing requirement for attribute "%s".', $varName));
-                }
-
-                if (!isset($config['defaults'][$varName]) || '' === trim((string) $config['defaults'][$varName])) {
-                    throw new \InvalidArgumentException(sprintf('Missing default value for attribute "%s".', $varName));
-                }
-
-                if (!preg_match('/^([\p{L}\p{N}-_]+\|?)+$/iu', (string) $config['requirements'][$varName])) {
-                    throw new \InvalidArgumentException(
-                        'A host requirement can only hold letters, numbers with middle and underscores'.
-                        ' separated by "|" (to allow more combinations).'
-                    );
-                }
-            }
-        }
-    }
-
-    private function normalizePrefix(string $prefix): string
-    {
-        $prefix = trim(mb_strtolower($prefix), '/');
-
-        if ('/' !== $prefix) {
-            $prefix .= '/';
-        }
-
-        return $prefix;
+        return [
+            'is_secure' => $this->isSecure,
+            'domain' => $this->domain,
+            'host' => $this->host,
+            'host_pattern' => $this->hostPattern,
+            'prefix' => $this->prefix,
+            'defaults' => $this->defaults,
+            'requirements' => $this->requirements,
+            'path' => $this->path,
+        ];
     }
 
     private static function stripDelimiters(?string $regex): ?string
@@ -142,12 +115,65 @@ final class SectionConfiguration
         return mb_substr($regex, 1, mb_strrpos($regex, $regex[0], 0, 'UTF-8') - 1, 'UTF-8');
     }
 
-    private function findAcceptedValues(string $tokenPart, array $config): array
+    private function findAcceptedValues(string $tokenPart, self $config): array
     {
         if ('{' === $tokenPart[0]) {
-            return explode('|', trim($config['requirements'][trim($tokenPart, '{}')], '|'));
+            return explode('|', trim($config->requirements[trim($tokenPart, '{}')], '|'));
         }
 
         return [$tokenPart];
+    }
+
+    private function processHost(string $host): ?string
+    {
+        // Wildcard character us only used for the pattern. But ignored for the configuration.
+        if ('*' === $host || '' === $host) {
+            return null;
+        }
+
+        if (false !== strpos($host, '{')) {
+            $host = preg_replace_callback('#\{([^}]+)\}#', [$this, 'replaceAttributeCallback'], $host);
+        }
+
+        return $host;
+    }
+
+    /** @internal */
+    public function replaceAttributeCallback(array $value): string
+    {
+        if (!preg_match('#^([a-z]\w*);([\w-]+);([\w-]+(?:\|[\w-]+)*)$#', $value[1], $matches)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Invalid host attribute around "%s". Expected something like: "{name;default;value1|value2}". '.
+                    'Accepted values cannot be regexp.',
+                    $value[0]
+                )
+            );
+        }
+        list(, $name, $default, $accepted) = $matches;
+
+        if (isset($this->defaults[$name])) {
+            throw new \InvalidArgumentException(sprintf('Host attribute "%s" is already used.', $name));
+        }
+
+        $this->requirements[$name] = $accepted;
+        $this->defaults[$name] = $default;
+
+        return '{'.$name.'}';
+    }
+
+    private function processPrefix(string $prefix): string
+    {
+        if (preg_match('#[{}]#', $prefix)) {
+            throw new \InvalidArgumentException('Attributes in the "prefix" are not accepted.');
+        }
+
+        $prefix = mb_strtolower(trim($prefix, '/'));
+
+        if ('' === $prefix || '/' !== mb_substr($prefix, -1)) {
+            $prefix .= '/';
+        }
+
+        return $prefix;
     }
 }

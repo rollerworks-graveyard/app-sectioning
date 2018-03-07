@@ -85,8 +85,10 @@ class AppKernel extends Kernel
     {
         $loader->load($this->config);
 
+        $sections = $container->getParameter('app_sections');
         (new SectioningFactory($container, 'park_manager.section'))
-            ->fromArray(['backend', 'frontend'], $container->getParameter('app_sections'))
+            ->set('backend', $sections['backend'])
+            ->set('frontend', $sections['frontend'])
             ->register();
     }
 

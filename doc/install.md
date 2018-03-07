@@ -20,7 +20,7 @@ Registering Sections
 
 **Note:** The SectioningFactory needs to register the app-sections parameters
 before any Extension can use them. Because of this, the SectioningFactory is
-placed directly within the Kernel bore any extensions initialized.
+placed directly within the Kernel before any extensions are initialized.
 
 The AppSectioning configurator helps with separating your Symfony application
 into multiple sections (eg. frontend and backend). Each with there own
@@ -48,11 +48,14 @@ class Kernel extends BaseKernel
 
     protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader): void
     {
-        (new SectioningFactory($container, 'acme.section'))
+        $sections = $container->getParameter('app_sections');
+        (new SectioningFactory($container, 'app.section'))
             // You can use choose to container parameters or load them from the Enviroment (requires manual cache:clear)
             // Only sections defined in $requiredSections are registered.
-            ->fromArray(/* $requiredSections /*['frontend', 'backend'], $container->getParameter('app_sections'))
-            // fromJson(['frontend', 'backend'], $_ENV['app_sections'] ?? '') # Note: Requires a manual cache:clear
+            ->set('frontend', $sections['frontend'])
+            ->set('backend', $sections['backend'])
+            
+            // ->set('backend', $_ENV['APP_BACKEND_URL'] ?? '/admin') # Note: Requires a manual cache:clear
             ->register();
             
         // ...
@@ -60,101 +63,88 @@ class Kernel extends BaseKernel
 }
 ```
 
-
 That's it! You can now configure the sections with a custom host and prefix 
 using the following configuration:
 
 ```yaml
 parameters:
     app_sections:
-        frontend:
-            prefix: /
-            host: example.com
-        backend:
-            prefix: /admin
-            host: example.com
-            
-            # Same as any routing configuration
-            # For host attributes a few limitations apply (see below)
-            requirements: { } # Cannot be null; defaults to { }
-            defaults: { }     # Cannot be null; defaults to { }
+        frontend: 'example.com/'
+        backend: 'https://example.com/admin'
 ```
 
-Or loading them from a `.env` file (using `fromJson`):
+Or loading them from a `.env` file:
 
 ```bash
 # NOTE. Changing this value requires a manual cache:clear
-APP_SECTIONS='{"frontend":{"prefix":"\/","host":"example.com"},"backend":{"prefix":"\/admin","host":"example.com"}}'
+APP_FRONTEND_URL="example.com/"
+APP_BACKEND_URL="https://example.com/admin"
 ```
 
-**Tip:** http://www.unserialize.me/ allows to convert from YAML to JSON.
+**Caution:** A prefix must always begin with a `/` otherwise `admin/` is seen
+as host `admin` and prefix `/`.
 
 ### Dynamic host requirements
 
-The host configuration allows the usage attributes using non-regexp accepted
-values separated by `|`; Eg. `com|net`. As you would in the Routing system.
+The host allows the usage of variables with accepted values separated by `|`; 
+Eg. `com|net`. As you would in the Routing system (except that regexp is not 
+supported).
 
-With a minor exception, you must define the requirements and defaults for all host attributes;
-And the host requirements only allow usage of a `|` but no any other regexp.
+An variable is defined as `{variable-name;default-value;accepted-values}`
 
 ```yaml
 parameters:
     app_sections:
-        frontend:
-            prefix: /
-            host: example.{tld}
-            defaults: 
-                tld: com
-            requirements: 
-                tld: 'com|net'
-        backend:
-            prefix: /
-            host: example.{tld}
-            defaults: 
-                tld: nl
-            requirements: 
-                tld: 'nl|de'
-                section: { title: backend } # Only attributes used by the host are validated, all others are passed to the Route definition as-is
+        frontend: 'example.{tld;com;com|net}/'
+        backend: 'example.{tld;nl;nl|de}/'
 ```
 
-Or loading them from a `.env` file (using `fromJson`):
+Or loading them from a `.env` file:
 
 ```bash
 # NOTE. Changing this value requires a manual cache:clear
-APP_SECTIONS='{"frontend":{"prefix":"\/","host":"example.{tld}","defaults":{"tld":"com"},"requirements":{"tld":"com|net"}},"backend":{"prefix":"\/","host":"example.{tld}","defaults":{"tld":"nl"},"requirements":{"tld":"nl|de"}}}'
+APP_FRONTEND_URL="example.{tld;com;com|net}/"
+APP_BACKEND_URL="example.{tld;nl;nl|de}/"
 ```
 
 ### Container parameters
 
-In your bundle services or application [security firewall], [routing] etc.
-you use the service-container parameters as follow:
+The SectioningFactory registers a number of service-container parameters
+for usage in your service definitions, [security config] and [routing]
+schema.
+
+Parameters are registered as follow:
 
 ```
-'acme.section.frontend.host'         : 'example.com'
-'acme.section.frontend.host_pattern' : '^example\.com$'
-'acme.section.frontend.prefix'       : '/'
-'acme.section.frontend.path'         : '^/(?!(backend|api)/)'
+'app.section.frontend.is_secure'    : false
+'app.section.channel'               : null
+'app.section.frontend.host'         : 'example.com'
+'app.section.frontend.domain'       : 'example.com'
+'app.section.frontend.host_pattern' : '^example\.com$'
+'app.section.frontend.prefix'       : '/'
+'app.section.frontend.path'         : '^/(?!(backend|api)/)'
 ```
-
-And in addition you have the `acme.section.frontend.host_requirements` and
-`acme.section.frontend.host_default` which are primarily used for routing.
 
 **Note:**
 
-> `host_pattern` and `path` are regular expressions, `host_pattern` will 
-> match completely but `path` will only check the beginning of the uri.
->
-> The `host` may contain attributes such as `example.{tld}`
+* The `host_pattern` and `path` are regular expressions, `host_pattern`
+  matches completely but `path` will only matches the beginning of a uri.
 
-The `acme.section.frontend.request_matcher` service provides a `RequestMatcher`
-for the firewall and other services.
+* The `host` may contain variables such as `example.{tld}` use `domain`
+  which only contains a value _if_ the host doesn not contain any variables.
+
+* The `channel` is only set to 'https' when `is_secure` is true. 
+  _This prevents forcing an HTTP channel when HTTPS is used._
+
+The `app.section.frontend.request_matcher` service provides a `RequestMatcher`
+for a firewall and other services.
 
 All parameters follow the same `{service-prefix}.{section-name}` pattern.
 
-The Service-prefix is configured as the second parameter of `SectioningFactory`
-used when registering (`acme.section` in the example above).
+The Service-prefix is configured as the second parameter of the `SectioningFactory`
+used when registering (`app.section` in the example above).
 
-And `{section-name}` the name of the section (like 'frontend').
+And `{section-name}` as the name of the section (like 'frontend').
 
 [security firewall]: firewall.md
 [routing]: routing.md
@@ -162,9 +152,10 @@ And `{section-name}` the name of the section (like 'frontend').
 ## Limitations
 
 The main purpose of this library is separating the application's UI into
-multiple sections, using the host and prefix.
+multiple sections, using the host and prefix; The schema is used to 
+configure `is_secure`.
 
-* Attributes in the prefix are not supported;
-* The routing doesn't allow setting conditions or schema's;
-* Host requirements only allow the usage of `|` but no regexp;
-* An IP address as host requirement cannot have attributes.
+* The prefix does not allow the usage of variables (you can still use variables
+  in routes themselves);
+* The host variables requirements do not allow regexp;
+* The host accepts an IP address but does not allow variables then.
