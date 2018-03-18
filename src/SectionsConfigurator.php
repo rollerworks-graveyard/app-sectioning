@@ -216,8 +216,8 @@ final class SectionsConfigurator
 
     private function findNoneMatchingPath(string $currentPrefix, string $otherPrefix): string
     {
-        $prefix = array_filter(explode('/', $currentPrefix));
-        $prefixes = array_filter(explode('/', $otherPrefix));
+        $prefix = array_filter(explode('/', trim($currentPrefix, '/')));
+        $prefixes = array_filter(explode('/', trim($otherPrefix, '/')));
         $matches = false;
 
         foreach ($prefixes as $i => $secondaryPrefix) {

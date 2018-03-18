@@ -49,7 +49,7 @@ final class SectioningFactoryTest extends AbstractContainerBuilderTestCase
                     'domain' => 'example.com',
                     'host' => 'example.com',
                     'host_pattern' => '^example\.com$',
-                    'prefix' => 'backend/',
+                    'prefix' => '/backend/',
                     'defaults' => [],
                     'requirements' => [],
                     'path' => '^/backend/',
