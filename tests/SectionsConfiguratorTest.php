@@ -38,7 +38,7 @@ final class SectionsConfiguratorTest extends TestCase
                     'host' => null,
                     'domain' => null,
                     'host_pattern' => null,
-                    'prefix' => 'client/',
+                    'prefix' => '/client/',
                     'path' => '^/client/',
                     'requirements' => [],
                     'defaults' => [],
@@ -48,7 +48,7 @@ final class SectionsConfiguratorTest extends TestCase
                     'host' => 'example.com',
                     'domain' => 'example.com',
                     'host_pattern' => '^example\.com$',
-                    'prefix' => 'backend/',
+                    'prefix' => '/backend/',
                     'path' => '^/backend/',
                     'requirements' => [],
                     'defaults' => [],
@@ -121,7 +121,7 @@ final class SectionsConfiguratorTest extends TestCase
                     'host' => null,
                     'domain' => null,
                     'host_pattern' => null,
-                    'prefix' => 'backend/',
+                    'prefix' => '/backend/',
                     'path' => '^/backend/',
                     'requirements' => [],
                     'defaults' => [],
@@ -131,7 +131,7 @@ final class SectionsConfiguratorTest extends TestCase
                     'host' => null,
                     'domain' => null,
                     'host_pattern' => null,
-                    'prefix' => 'api/',
+                    'prefix' => '/api/',
                     'path' => '^/api/',
                     'requirements' => [],
                     'defaults' => [],
@@ -169,7 +169,7 @@ final class SectionsConfiguratorTest extends TestCase
                     'host' => null,
                     'domain' => null,
                     'host_pattern' => null,
-                    'prefix' => 'backend/',
+                    'prefix' => '/backend/',
                     'path' => '^/backend/',
                     'requirements' => [],
                     'defaults' => [],
@@ -179,7 +179,7 @@ final class SectionsConfiguratorTest extends TestCase
                     'host' => null,
                     'domain' => null,
                     'host_pattern' => null,
-                    'prefix' => 'api/backend/',
+                    'prefix' => '/api/backend/',
                     'path' => '^/api/backend/',
                     'requirements' => [],
                     'defaults' => [],
@@ -189,7 +189,7 @@ final class SectionsConfiguratorTest extends TestCase
                     'host' => null,
                     'domain' => null,
                     'host_pattern' => null,
-                    'prefix' => 'api/',
+                    'prefix' => '/api/',
                     'path' => '^/api/(?!(backend)/)',
                     'requirements' => [],
                     'defaults' => [],
@@ -227,7 +227,7 @@ final class SectionsConfiguratorTest extends TestCase
                     'domain' => 'example.com',
                     'host' => 'example.com',
                     'host_pattern' => '^example\.com$',
-                    'prefix' => 'backend/',
+                    'prefix' => '/backend/',
                     'path' => '^/backend/',
                     'requirements' => [],
                     'defaults' => [],
@@ -237,7 +237,7 @@ final class SectionsConfiguratorTest extends TestCase
                     'domain' => 'example.com',
                     'host' => 'example.com',
                     'host_pattern' => '^example\.com$',
-                    'prefix' => 'api/backend/',
+                    'prefix' => '/api/backend/',
                     'path' => '^/api/backend/',
                     'requirements' => [],
                     'defaults' => [],
@@ -247,7 +247,7 @@ final class SectionsConfiguratorTest extends TestCase
                     'domain' => 'example.com',
                     'host' => 'example.com',
                     'host_pattern' => '^example\.com$',
-                    'prefix' => 'api/',
+                    'prefix' => '/api/',
                     'path' => '^/api/(?!(backend)/)',
                     'requirements' => [],
                     'defaults' => [],
@@ -285,7 +285,7 @@ final class SectionsConfiguratorTest extends TestCase
                     'domain' => 'example.com',
                     'host' => 'example.com',
                     'host_pattern' => '^example\.com$',
-                    'prefix' => 'backend/',
+                    'prefix' => '/backend/',
                     'path' => '^/backend/',
                     'requirements' => [],
                     'defaults' => [],
@@ -295,7 +295,7 @@ final class SectionsConfiguratorTest extends TestCase
                     'domain' => 'example.com',
                     'host' => 'example.com',
                     'host_pattern' => '^example\.com$',
-                    'prefix' => 'api/backend/',
+                    'prefix' => '/api/backend/',
                     'path' => '^/api/backend/',
                     'requirements' => [],
                     'defaults' => [],
@@ -305,7 +305,7 @@ final class SectionsConfiguratorTest extends TestCase
                     'domain' => 'example.com',
                     'host' => 'example.com',
                     'host_pattern' => '^example\.com$',
-                    'prefix' => 'api/',
+                    'prefix' => '/api/',
                     'path' => '^/api/(?!(backend)/)',
                     'requirements' => [],
                     'defaults' => [],
@@ -368,7 +368,7 @@ final class SectionsConfiguratorTest extends TestCase
         $this->assertEquals('^example\.(?P<tld>com|net)$', $container->getParameter('acme.section.backend.host_pattern'));
         $this->assertEquals(['tld' => 'com'], $container->getParameter('acme.section.backend.defaults'));
         $this->assertEquals(['tld' => 'com|net'], $container->getParameter('acme.section.backend.requirements'));
-        $this->assertEquals('backend/', $container->getParameter('acme.section.backend.prefix'));
+        $this->assertEquals('/backend/', $container->getParameter('acme.section.backend.prefix'));
         $this->assertEquals('^/backend/', $container->getParameter('acme.section.backend.path'));
 
         $requestMatcherFrontend = $container->getDefinition('acme.section.frontend.request_matcher');
@@ -447,7 +447,7 @@ final class SectionsConfiguratorTest extends TestCase
         $failedSections = [
             // primary => [host, prefix, conflicts]
             'first' => ['^example\.com$', '/', ['second', 'third']],
-            'first1' => ['', 'foo/', ['second2']],
+            'first1' => ['', '/foo/', ['second2']],
         ];
 
         $expectedMessage = ValidatorException::sectionsConfigConflict($failedSections)->getMessage();

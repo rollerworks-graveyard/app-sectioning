@@ -81,10 +81,10 @@ final class SectionConfigurationTest extends TestCase
      */
     public function it_converts_the_prefix_to_lowercase_and_ensures_slashes()
     {
-        $this->assertEquals('something/', (new SectionConfiguration('Example.com/Something'))->prefix);
-        $this->assertEquals('something/', (new SectionConfiguration('Example.com/Something/'))->prefix);
-        $this->assertEquals('something/', (new SectionConfiguration('/Something/'))->prefix);
-        $this->assertEquals('foo/', (new SectionConfiguration('/foo'))->prefix);
+        $this->assertEquals('/something/', (new SectionConfiguration('Example.com/Something'))->prefix);
+        $this->assertEquals('/something/', (new SectionConfiguration('Example.com/Something/'))->prefix);
+        $this->assertEquals('/something/', (new SectionConfiguration('/Something/'))->prefix);
+        $this->assertEquals('/foo/', (new SectionConfiguration('/foo'))->prefix);
 
         // Note. foo/ assumes foo is the host. Make sure the prefix always begins with a /
     }

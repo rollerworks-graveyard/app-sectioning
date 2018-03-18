@@ -174,10 +174,6 @@ final class SectionConfiguration
 
         $prefix = mb_strtolower(trim($prefix, '/'));
 
-        if ('' === $prefix || '/' !== mb_substr($prefix, -1)) {
-            $prefix .= '/';
-        }
-
-        return $prefix;
+        return '' === $prefix ? '/' : "/$prefix/";
     }
 }
