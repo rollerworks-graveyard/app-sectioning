@@ -30,7 +30,7 @@ abstract class FunctionalTestCase extends WebTestCase
         return AppKernel::class;
     }
 
-    protected static function newClient(array $options = [], array $server = []): Client
+    protected static function newClient(array $options = [], array $server = [])
     {
         $client = static::createClient(array_merge(['config' => 'default.yml'], $options), $server);
 
