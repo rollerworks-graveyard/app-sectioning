@@ -78,7 +78,7 @@ class AppKernel extends Kernel
 
     public function unserialize($str)
     {
-        call_user_func_array([$this, '__construct'], unserialize($str));
+        \call_user_func_array([$this, '__construct'], unserialize($str));
     }
 
     protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader): void

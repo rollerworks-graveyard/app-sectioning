@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Rollerworks\Component\AppSectioning\Tests\Functional;
 
 use Rollerworks\Component\AppSectioning\Tests\Functional\Application\AppKernel;
-use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerAggregate;
 
